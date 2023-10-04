@@ -13,10 +13,33 @@ export default function NewProduct() {
     setProductImages(prevImages => [...prevImages, ...files]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle the submission logic, e.g., upload images, save the product to the database, etc.
+  
+    const formData = new FormData();
+    formData.append('name', productName);
+    formData.append('description', productDescription);
+    formData.append('price', productPrice);
+    formData.append('quantity', productQuantity);
+    productImages.forEach(image => formData.append('images', image));
+  
+    try {
+      const response = await fetch('/api/newproduct', {
+        method: 'POST',
+        body: formData,
+    });
+    
+    if (!response.ok) {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+        // handle the error, maybe set an error state or show a notification to the user
+        return;
+    }
+    } catch (error) {
+      console.error("Error submitting product:", error);
+      alert('An error occurred. Please try again.');
+    }
   };
+  
 
   return (
     <div>

@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "app/redux/features/cart/cartSlice.js", "lib/mongodb.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "app/redux/features/cart/cartSlice.js", "lib/mongodb.js", "app/api/newproduct/route.ts", "app/all-components/NewProduct.jsx"],
   "exclude": ["node_modules"]
 }
