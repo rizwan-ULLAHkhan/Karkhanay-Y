@@ -23,6 +23,7 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "app/redux/features/cart/cartSlice.js", "lib/mongodb.js", "app/api/newproduct/route.ts", "app/all-components/NewProduct.jsx"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "app/redux/features/cart/cartSlice.js", "lib/mongodb.js", "app/api/newproduct/route.ts", "app/all-components/NewProduct.jsx", "types/next.d.ts", "lib/multer.js"],
+  "exclude": ["node_modules"],
+  "typeRoots": ["./types", "./node_modules/@types"]
 }

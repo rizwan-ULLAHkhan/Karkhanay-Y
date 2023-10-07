@@ -1,6 +1,8 @@
 import { type SchemaTypeDefinition } from 'sanity'
-import { VideoSchema } from './videoschema'
+import product from './product';
+import productImage from './productImage'
+
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [VideoSchema],
+  types: [productImage, product],
 }

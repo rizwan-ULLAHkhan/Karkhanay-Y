@@ -1,11 +1,14 @@
 'use client'
 // components/Dashboard.js
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Products from './Products';
 import NewProduct from './NewProduct'
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(1);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  
 
   return (
     <div className="p-4 md:p-8">
@@ -31,7 +34,7 @@ export default function Dashboard() {
       </div>
 
       {activeTab === 1 && <GeneralInfo />}
-      {activeTab === 2 && <ListedProducts />}
+      {activeTab === 2 && <ListedProducts imageUrl={imageUrl} />}
       {activeTab === 3 && <NewProduct />}
     </div>
   );
@@ -57,7 +60,11 @@ function GeneralInfo() {
 }
 
 
-function ListedProducts() {
+function ListedProducts({ imageUrl }) {
+
+
+
+
   const products = [
     {
       id: 1,
@@ -82,6 +89,11 @@ function ListedProducts() {
       {products.map(product => (
         <Products key={product.id} product={product} />
       ))}
+
+      <div>
+        {imageUrl && <img src={imageUrl} alt="Sanity Image" />}
+      </div>
+
     </div>
   );
 }
