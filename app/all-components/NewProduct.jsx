@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react';
 import { createClient } from '@sanity/client';
+import '@/app/globals.css'
 
 // Setup the Sanity client
 export const client = createClient({
@@ -17,66 +18,132 @@ export default function NewProduct() {
   const [productPrice, setProductPrice] = useState('');
   const [productQuantity, setProductQuantity] = useState('');
   const [productImages, setProductImages] = useState([]);
-  const fileInputRef = useRef(null); 
+  const [notification, setNotification] = useState({ visible: false, message: '' });
+  const [modal, setModal] = useState({ visible: false, message: '' });
+  const fileInputRef = useRef(null);
+  const [formErrors, setFormErrors] = useState({});
 
 
 
 
 
+  const validateForm = () => {
+    let errors = {};
 
+    if (!productName.trim()) errors.name = "Product Name is required.";
+    if (!productDescription.trim()) errors.description = "Description is required.";
+    if (!productPrice || productPrice <= 0) errors.price = "Please enter a valid price.";
+    if (!productQuantity || productQuantity <= 0) errors.quantity = "Please enter a valid quantity.";
+    if (productImages.length === 0) errors.images = "At least one image is required.";
+
+    return errors;
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setProductImages(prevImages => [...prevImages, ...files]);
   };
 
-  const fetchImageData = async (refId) => {
-    try {
-      const query = `*[_id == "${refId}"].image.url`;
-      const result = await client.fetch(query);
-      console.log(result)
-      return result;
-    } catch (error) {
-      console.error('Error fetching image:', error);
+
+
+  const baseImageUrl = 'https://cdn.sanity.io/images';
+
+  const constructImageUrl = async (refId) => {
+
+    const query = `*[_id == "${refId}"].image.asset._ref`
+    const ref = await client.fetch(query);
+    console.log(ref)
+    if (Array.isArray(ref) && ref.length > 0 && typeof ref[0] === "string") {
+      const splitRef = ref[0].split('-');
+      const uniqueId = splitRef[1];
+      const dimensions = splitRef[2]; // This might not be needed for the URL, depending on your configuration
+      const format = splitRef[3];
+      const url = `${baseImageUrl}/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${uniqueId}-${dimensions}.${format}`
+      console.log(url)
+      return url;
     }
+
   }
+  // const fetchImageData = async (refId) => {
+  //   try {
+  //     const query = `*[_id == '${refId}'].image.url`;
+  //     const result = await client.fetch(query);
+  //     console.log(result)
+  //     return result;
+  //   } catch (error) {
+  //     console.error('Error fetching image:', error);
+  //   }
+  // }
 
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    let errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    if (productImages.length === 0) {
+      setNotification({ visible: true, message: 'Please select an image first.' });
+      setTimeout(() => {
+        setNotification({ visible: false, message: '' });
+      }, 2000);
+      return;
+    }
+
     // Upload image(s) to Sanity
     console.log(productImages, "checking")
     let imageReferences = [];
-for (let image of productImages) {
-    // 1. Upload the image asset
-    const uploadedImageAsset = await client.assets.upload('image', image);
-    
-    // 2. Create imageData with _id from uploaded asset
-    const imageData = {
-        _type: 'productImage',
-        image: {
+
+    for (let image of productImages) {
+      // 1. Upload the image asset
+      try {
+        const uploadedImageAsset = await client.assets.upload('image', image);
+
+        // 2. Create imageData with _id from uploaded asset
+        const imageData = {
+          _type: 'productImage',
+          image: {
             _type: 'image',
             asset: {
-                _ref: uploadedImageAsset._id,
-                _type: 'reference'
+              _ref: uploadedImageAsset._id,
+              _type: 'reference'
             }
-        },
-        description: `${productDescription}`
-    };
-    
-    // 3. Create the productImage document
-    const createdImageDoc = await client.create(imageData);
-    imageReferences.push({ _ref: createdImageDoc._id, _type: 'reference' });
-    console.log(imageReferences, 'check')
-}
+          },
+          description: `${productDescription}`
+        };
 
+        // 3. Create the productImage document
+        const createdImageDoc = await client.create(imageData);
+        if (!createdImageDoc || !createdImageDoc._id) {
+          throw new Error("Failed to create the image document or received an unexpected response from Sanity.");
+        }
+        imageReferences.push({ _ref: createdImageDoc._id, _type: 'reference' });
+        console.log(imageReferences, 'check')
+      }
+      catch (error) {
+        console.error("Error uploading image:", error); // For developer to see
+      }
+    }
+
+    // 3. Check if imageReferences is populated
+    if (imageReferences.length === 0) {
+      setModal({ visible: true, message: 'Unable to process the image. Please try again.' });
+      setTimeout(() => {
+        setModal({ visible: false, message: '' });
+      }, 3000);
+      return;
+    }
 
 
     const imageUrls = [];
     for (let imageRef of imageReferences) {
-      const url = await fetchImageData(imageRef._ref);
+      console.log(imageRef._ref)
+      const url = await constructImageUrl(imageRef._ref);
+
       if (url) {
         imageUrls.push(url);
       }
@@ -92,7 +159,8 @@ for (let image of productImages) {
       name: productName,
       description: productDescription,
       price: productPrice,
-      quantity: productQuantity
+      quantity: productQuantity,
+      urls: imageUrls
     };
 
     try {
@@ -133,9 +201,10 @@ for (let image of productImages) {
             onChange={(e) => setProductName(e.target.value)}
             className="border w-full p-2 rounded"
           />
+          {formErrors.name && <p className="text-red-500">{formErrors.name}</p>}
         </div>
         <div>
-          <label htmlFor="productDesc" className="block mb-2">Description</label>
+          <label htmlFor="productDesc" className="block mb-2 ">Description</label>
           <textarea
             id="productDesc"
             value={productDescription}
@@ -143,6 +212,7 @@ for (let image of productImages) {
             className="border w-full p-2 rounded"
             rows="5"
           ></textarea>
+          {formErrors.description && <p className="text-red-500">{formErrors.description}</p>}
         </div>
         <div>
           <label htmlFor="productPrice" className="block mb-2">Price</label>
@@ -153,6 +223,7 @@ for (let image of productImages) {
             onChange={(e) => setProductPrice(e.target.value)}
             className="border w-full p-2 rounded"
           />
+          {formErrors.price && <p className="text-red-500">{formErrors.price}</p>}
         </div>
         <div>
           <label htmlFor="productQuantity" className="block mb-2">Quantity</label>
@@ -163,6 +234,7 @@ for (let image of productImages) {
             onChange={(e) => setProductQuantity(e.target.value)}
             className="border w-full p-2 rounded"
           />
+          {formErrors.quantity && <p className="text-red-500">{formErrors.quantity}</p>}
         </div>
         <div>
           <label className="block mb-2">Product Images</label>
@@ -194,6 +266,16 @@ for (let image of productImages) {
             ))}
           </ul>
         </div>
+        {notification.visible && (
+          <div className="notification text-red-500">
+            {notification.message}
+          </div>
+        )}
+        {modal.visible && (
+          <div className="modal-content text-red-500">
+            <p>{modal.message}</p>
+          </div>
+        )}
         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">List Product</button>
       </form>
     </div>

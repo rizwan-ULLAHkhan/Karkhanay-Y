@@ -3,10 +3,11 @@
 import { useState,useEffect } from 'react';
 import Products from './Products';
 import NewProduct from './NewProduct'
+import ListedProduct from './ListedProduct'
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(1);
-  const [imageUrl, setImageUrl] = useState(null);
+  
 
   
 
@@ -34,7 +35,7 @@ export default function Dashboard() {
       </div>
 
       {activeTab === 1 && <GeneralInfo />}
-      {activeTab === 2 && <ListedProducts imageUrl={imageUrl} />}
+      {activeTab === 2 && <ListedProduct  />}
       {activeTab === 3 && <NewProduct />}
     </div>
   );
@@ -60,43 +61,7 @@ function GeneralInfo() {
 }
 
 
-function ListedProducts({ imageUrl }) {
 
-
-
-
-  const products = [
-    {
-      id: 1,
-      name: "Industrial Machine A",
-      price: "$500",
-      quantity: 5,
-      images: ["url1.jpg", "url2.jpg"]
-    },
-    {
-      id: 2,
-      name: "Toolset B",
-      price: "$100",
-      quantity: 50,
-      images: ["url3.jpg"]
-    },
-    // ... more products ...
-  ];
-
-  return (
-    <div>
-      <h2 className="text-xl mb-4">Your Products</h2>
-      {products.map(product => (
-        <Products key={product.id} product={product} />
-      ))}
-
-      <div>
-        {imageUrl && <img src={imageUrl} alt="Sanity Image" />}
-      </div>
-
-    </div>
-  );
-}
 
 
 
