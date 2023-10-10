@@ -14,6 +14,7 @@ interface ProductRequestBody {
   price: string;
   quantity: string;
   urls:string[];
+  inStock: boolean
 }
 
 // Named export for handling POST requests
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const data = await req.json();
 console.log(data);
   // Extracting the body directly
-  const { name, description, price, quantity,urls } = data  as ProductRequestBody;
+  const { name, description, price, quantity,urls,inStock } = data  as ProductRequestBody;
   console.log(urls, "j")
   
   const client = await clientPromise;
@@ -35,6 +36,7 @@ console.log(data);
     price,
     quantity,
     urls,
+    inStock,
     createdAt: new Date(),
   };
 

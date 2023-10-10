@@ -22,6 +22,8 @@ export default function NewProduct() {
   const [modal, setModal] = useState({ visible: false, message: '' });
   const fileInputRef = useRef(null);
   const [formErrors, setFormErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [inStock, setInStock] = useState(true);
 
 
 
@@ -79,12 +81,8 @@ export default function NewProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
 
-    let errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
 
     if (productImages.length === 0) {
       setNotification({ visible: true, message: 'Please select an image first.' });
@@ -93,6 +91,14 @@ export default function NewProduct() {
       }, 2000);
       return;
     }
+
+    let errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setIsLoading(true)
 
     // Upload image(s) to Sanity
     console.log(productImages, "checking")
@@ -119,6 +125,7 @@ export default function NewProduct() {
         // 3. Create the productImage document
         const createdImageDoc = await client.create(imageData);
         if (!createdImageDoc || !createdImageDoc._id) {
+          setIsLoading(false);
           throw new Error("Failed to create the image document or received an unexpected response from Sanity.");
         }
         imageReferences.push({ _ref: createdImageDoc._id, _type: 'reference' });
@@ -131,7 +138,7 @@ export default function NewProduct() {
 
     // 3. Check if imageReferences is populated
     if (imageReferences.length === 0) {
-      setModal({ visible: true, message: 'Unable to process the image. Please try again.' });
+      setModal({ visible: true, message: 'Unable to process the image. Please try again.', color: 'text-red-500'});
       setTimeout(() => {
         setModal({ visible: false, message: '' });
       }, 3000);
@@ -160,7 +167,8 @@ export default function NewProduct() {
       description: productDescription,
       price: productPrice,
       quantity: productQuantity,
-      urls: imageUrls
+      urls: imageUrls,
+      inStock: inStock 
     };
 
     try {
@@ -173,18 +181,34 @@ export default function NewProduct() {
       });
 
       if (!response.ok) {
+        setIsLoading(false);
         console.error(`Error : ${response.status} - ${response.statusText}`);
         // handle the error, maybe set an error state or show a notification to the user
         return;
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error submitting product:", error);
       alert('An error occurred. Please try again.');
     }
 
+    setIsLoading(false);
+    setModal({
+      visible: true,
+      message: 'Data uploaded successfully!',
+      color: 'text-green-500'
+    });
+
+    setTimeout(() => {
+      setModal({ visible: false, message: '' });
+    }, 3000);
+
+    setProductImages([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+
+    
   };
 
 
@@ -272,10 +296,12 @@ export default function NewProduct() {
           </div>
         )}
         {modal.visible && (
-          <div className="modal-content text-red-500">
+          <div className={`modal-content ${modal.color} `}>
             <p>{modal.message}</p>
           </div>
         )}
+        {isLoading && <div className="loader">Loading...</div>}
+
         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">List Product</button>
       </form>
     </div>
