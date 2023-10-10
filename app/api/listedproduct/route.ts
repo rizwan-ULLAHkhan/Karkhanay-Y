@@ -1,13 +1,6 @@
 import clientPromise from '../../../lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 
-export const config = {
-  api: {
-    bodyParser: true, 
-    externalResolver: true // Enable bodyParser for this route.
-  },
-
-};
 
 // Named export for handling GET requests
 export async function GET(req: NextRequest, res: NextResponse) {

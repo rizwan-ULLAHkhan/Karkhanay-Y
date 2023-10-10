@@ -2,12 +2,7 @@ import clientPromise from '../../../../lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-export const config = {
-  api: {
-    bodyParser: true,
-    externalResolver: true
-  },
-};
+
 
 interface UpdateRequestBody {
   inStock: boolean;
