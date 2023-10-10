@@ -3,8 +3,10 @@ import { NextResponse, NextRequest } from 'next/server';
 
 export const config = {
   api: {
-    bodyParser: true,  // Enable bodyParser for this route.
+    bodyParser: true, 
+    externalResolver: true // Enable bodyParser for this route.
   },
+
 };
 
 // Named export for handling GET requests

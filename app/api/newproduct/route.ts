@@ -5,6 +5,7 @@ import { NextResponse, NextRequest } from 'next/server';
 export const config = {
   api: {
     bodyParser: true,  // Enable bodyParser for this route.
+    externalResolver: true
   },
 };
 
