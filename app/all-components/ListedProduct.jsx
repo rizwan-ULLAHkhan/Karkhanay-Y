@@ -42,7 +42,7 @@ const ListedProduct = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('/api/listedproduct?timestamp=${new Date().getTime()}'); // Adjust the URL to your products endpoint
+                const response = await fetch(`/api/listedproduct?timestamp=${new Date().getTime()}`); // Adjust the URL to your products endpoint
                 const data = await response.json();
                 console.log(data)
                 setProducts(data);
