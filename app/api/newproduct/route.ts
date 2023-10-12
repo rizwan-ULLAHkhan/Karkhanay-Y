@@ -1,5 +1,6 @@
 import clientPromise from '../../../lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -10,16 +11,22 @@ interface ProductRequestBody {
   price: string;
   quantity: string;
   urls:string[];
+  imageReferences:string[],
   inStock: boolean
 }
 
 // Named export for handling POST requests
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest , res: NextResponse) {
+  const { data: session } = useSession();
+  console.log(session?.user)
+  
+
+
   console.log("POST function accessed");
   const data = await req.json();
 console.log(data);
   // Extracting the body directly
-  const { name, description, price, quantity,urls,inStock } = data  as ProductRequestBody;
+  const { name, description, price, quantity,urls,imageReferences,inStock } = data  as ProductRequestBody;
   console.log(urls, "j")
   
   const client = await clientPromise;
@@ -32,6 +39,7 @@ console.log(data);
     price,
     quantity,
     urls,
+    imageReferences,
     inStock,
     createdAt: new Date(),
   };

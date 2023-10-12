@@ -1,16 +1,7 @@
 'use client'
 import { useState, useRef } from 'react';
-import { createClient } from '@sanity/client';
-import '@/app/globals.css'
+import {Sclient} from '@/app/sanityclientsetup'
 
-// Setup the Sanity client
-export const client = createClient({
-  projectId: 'u8znbhbc',
-  dataset: 'production',
-  useCdn: false, // set to `false` to bypass the edge cache
-  apiVersion: '2023-07-10', // use current date (YYYY-MM-DD) to target the latest API version
-  token: 'skHhghHJ3cbVYlQYdKF89AjHXiUgjIGmbkS5vBWK4r3ktAkzkZQwbmgKOr7hW5aa42nWR9lHDjzaZjk8Yxu9YEsmTo633JyOMvExjDHbgMd13MEfLvEVOO7tjgMZBboivz5JgGZglqJFmZ3dzujXp8ViBssw9skOchHikSnPLzITR0mEjRve' // Only if you want to update content with the client
-})
 
 export default function NewProduct() {
   const [productName, setProductName] = useState('');
@@ -53,7 +44,7 @@ export default function NewProduct() {
   const constructImageUrl = async (refId) => {
 
     const query = `*[_id == "${refId}"].image.asset._ref`
-    const ref = await client.fetch(query);
+    const ref = await Sclient.fetch(query);
     console.log(ref)
     if (Array.isArray(ref) && ref.length > 0 && typeof ref[0] === "string") {
       const splitRef = ref[0].split('-');
@@ -66,17 +57,7 @@ export default function NewProduct() {
     }
 
   }
-  // const fetchImageData = async (refId) => {
-  //   try {
-  //     const query = `*[_id == '${refId}'].image.url`;
-  //     const result = await client.fetch(query);
-  //     console.log(result)
-  //     return result;
-  //   } catch (error) {
-  //     console.error('Error fetching image:', error);
-  //   }
-  // }
-
+  
 
 
   const handleSubmit = async (e) => {
@@ -107,7 +88,7 @@ export default function NewProduct() {
     for (let image of productImages) {
       // 1. Upload the image asset
       try {
-        const uploadedImageAsset = await client.assets.upload('image', image);
+        const uploadedImageAsset = await Sclient.assets.upload('image', image);
 
         // 2. Create imageData with _id from uploaded asset
         const imageData = {
@@ -123,7 +104,7 @@ export default function NewProduct() {
         };
 
         // 3. Create the productImage document
-        const createdImageDoc = await client.create(imageData);
+        const createdImageDoc = await Sclient.create(imageData);
         if (!createdImageDoc || !createdImageDoc._id) {
           setIsLoading(false);
           throw new Error("Failed to create the image document or received an unexpected response from Sanity.");
@@ -168,7 +149,8 @@ export default function NewProduct() {
       price: productPrice,
       quantity: productQuantity,
       urls: imageUrls,
-      inStock: inStock 
+      imageReferences:imageReferences,
+      inStock: inStock, 
     };
 
     try {

@@ -5,7 +5,7 @@ import { NextResponse, NextRequest } from 'next/server';
 // Named export for handling GET requests
 export async function GET(req: NextRequest, res: NextResponse) {
   console.log("GET function accessed");
-
+  
   const client = await clientPromise;
   const db = client.db('Karkhanay');  
   const collection = db.collection('Ks-collection');

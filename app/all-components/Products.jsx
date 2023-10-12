@@ -1,10 +1,14 @@
-export default function Products({ product,handleStockChange }) {
+export default function Products({ product, handleStockChange ,handleDelete}) {
+
+  const onDelete=()=>{
+    handleDelete(product)
+  }
 
   // Update the checkbox change handler
   const onCheckboxChange = () => {
     handleStockChange(product);
-};
-  
+  };
+
   return (
     <div style={{ border: '1px solid #e1e1e1', borderRadius: '5px', padding: '20px', margin: '20px 0' }}>
       <h3 style={{ borderBottom: '1px solid #e1e1e1', paddingBottom: '10px' }}>{product.name}</h3>
@@ -28,6 +32,7 @@ export default function Products({ product,handleStockChange }) {
           <img key={index} src={url} alt={`Product Image ${index + 1}`} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '5px' }} />
         )) : null}
       </div>
+      <button className=' pt-2' onClick={() => onDelete()}>Delete</button>
     </div>
   );
 }
