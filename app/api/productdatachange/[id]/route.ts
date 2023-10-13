@@ -14,6 +14,11 @@ export async function PUT(req: NextRequest, context: { params: any }) {
   console.log("PUT function accessed");
   console.log(context)
 
+  const userEmail = req.headers.get('user-email');
+  if (!userEmail) {
+    return NextResponse.json({ message: 'User email not provided in headers' });
+  }
+
   const productId = context.params['id'];// Extract the productId from the URL
   console.log(productId)
   if (!productId) {
@@ -30,6 +35,18 @@ export async function PUT(req: NextRequest, context: { params: any }) {
   const collection = db.collection('Ks-collection');
 
   try {
+
+    const existingProduct = await collection.findOne({ _id: new ObjectId(productId) });
+
+    // Check if the product exists
+    if (!existingProduct) {
+      return NextResponse.json({ message: 'Product not found' });
+    }
+
+    // Check if the user has the permission to modify the product
+    if (existingProduct.userEmail !== userEmail) {
+      return NextResponse.json({ message: 'You do not have permission to modify this product' });
+    }
     const result = await collection.updateOne({ _id: new ObjectId(productId) }, { $set: { inStock: inStock } });
 
     console.log("Matched documents:", result.matchedCount);
@@ -54,6 +71,10 @@ export async function PUT(req: NextRequest, context: { params: any }) {
 export async function DELETE(req: NextRequest, context: { params: any }) {
   console.log("Delete function accessed")
   console.log(context)
+  const userEmail = req.headers.get('user-email');
+  if (!userEmail) {
+    return NextResponse.json({ message: 'User email not provided in headers' });
+  }
 
 
   const productId = context.params['id']; // Extract the productId from the URL
@@ -64,10 +85,21 @@ export async function DELETE(req: NextRequest, context: { params: any }) {
 
   try {
 
+    // Check if the product exists
+    const existingProduct = await collection.findOne({ _id: new ObjectId(productId) });
+    if (!existingProduct) {
+      return NextResponse.json({ message: 'Product not found' });
+    }
+
+    // Check if the user has the permission to delete the product
+    if (existingProduct.userEmail !== userEmail) {
+      return NextResponse.json({ message: 'You do not have permission to delete this product' });
+    }
+
     // Delete from Sanity
     // Fetch the MongoDB document using the productId
     const productDocument = await collection.findOne({ _id: new ObjectId(productId) });
-    console.log("this check",productDocument)
+    console.log("this check", productDocument)
 
     // Check if the productDocument has imageReferences
     if (productDocument && productDocument.imageReferences && productDocument.imageReferences.length > 0) {

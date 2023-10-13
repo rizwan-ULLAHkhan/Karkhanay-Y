@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react';
 import {Sclient} from '@/app/sanityclientsetup'
+import { useSession } from 'next-auth/react';
 
 
 export default function NewProduct() {
@@ -15,6 +16,10 @@ export default function NewProduct() {
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [inStock, setInStock] = useState(true);
+
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
+  console.log(userEmail)
 
 
 
@@ -144,6 +149,7 @@ export default function NewProduct() {
 
 
     const productData = {
+      userEmail:userEmail,
       name: productName,
       description: productDescription,
       price: productPrice,
