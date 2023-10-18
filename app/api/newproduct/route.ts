@@ -14,7 +14,9 @@ interface ProductRequestBody {
   quantity: string;
   urls: string[];
   imageReferences: string[],
-  inStock: boolean
+  inStock: boolean,
+  category:string,
+  is_trending:boolean
 }
 
 // Named export for handling POST requests
@@ -29,7 +31,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const data = await req.json();
   console.log(data);
   // Extracting the body directly
-  const { userEmail,name, description, price, quantity, urls, imageReferences, inStock } = data as ProductRequestBody;
+  const { userEmail,name, description, price, quantity, urls, imageReferences, inStock, category,is_trending } = data as ProductRequestBody;
   console.log(urls, "j")
 
   const client = await clientPromise;
@@ -45,6 +47,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     urls,
     imageReferences,
     inStock,
+    category,
+    is_trending,
     createdAt: new Date(),
   };
 

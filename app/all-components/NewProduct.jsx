@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react';
-import {Sclient} from '@/app/sanityclientsetup'
+import { Sclient } from '@/app/sanityclientsetup'
 import { useSession } from 'next-auth/react';
 
 
@@ -16,10 +16,18 @@ export default function NewProduct() {
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [inStock, setInStock] = useState(true);
+  const [productCategory, setProductCategory] = useState('');
 
   const { data: session } = useSession();
   const userEmail = session?.user?.email;
   console.log(userEmail)
+
+  const categories = [
+    "Sports Items",
+    "Medical Supplies",
+    "Minerals",
+    "Agricultural",
+  ];
 
 
 
@@ -33,6 +41,8 @@ export default function NewProduct() {
     if (!productPrice || productPrice <= 0) errors.price = "Please enter a valid price.";
     if (!productQuantity || productQuantity <= 0) errors.quantity = "Please enter a valid quantity.";
     if (productImages.length === 0) errors.images = "At least one image is required.";
+    if (!productCategory) errors.category = "Product Category is required.";
+
 
     return errors;
   };
@@ -62,12 +72,12 @@ export default function NewProduct() {
     }
 
   }
-  
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
 
 
     if (productImages.length === 0) {
@@ -124,7 +134,7 @@ export default function NewProduct() {
 
     // 3. Check if imageReferences is populated
     if (imageReferences.length === 0) {
-      setModal({ visible: true, message: 'Unable to process the image. Please try again.', color: 'text-red-500'});
+      setModal({ visible: true, message: 'Unable to process the image. Please try again.', color: 'text-red-500' });
       setTimeout(() => {
         setModal({ visible: false, message: '' });
       }, 3000);
@@ -149,14 +159,16 @@ export default function NewProduct() {
 
 
     const productData = {
-      userEmail:userEmail,
+      userEmail: userEmail,
       name: productName,
       description: productDescription,
       price: productPrice,
       quantity: productQuantity,
       urls: imageUrls,
-      imageReferences:imageReferences,
-      inStock: inStock, 
+      imageReferences: imageReferences,
+      inStock: inStock,
+      category: productCategory,
+      is_trending: true,
     };
 
     try {
@@ -196,7 +208,7 @@ export default function NewProduct() {
       fileInputRef.current.value = "";
     }
 
-    
+
   };
 
 
@@ -215,6 +227,22 @@ export default function NewProduct() {
           />
           {formErrors.name && <p className="text-red-500">{formErrors.name}</p>}
         </div>
+        <div>
+          <label htmlFor="productCategory" className="block mb-2">Category</label>
+          <select
+            id="productCategory"
+            value={productCategory}
+            onChange={(e) => setProductCategory(e.target.value)}
+            className="border w-full p-2 rounded"
+          >
+            <option value="">Select a category</option>
+            {categories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+          {formErrors.category && <p className="text-red-500">{formErrors.category}</p>} {/* Display the error message if not selected */}
+        </div>
+
         <div>
           <label htmlFor="productDesc" className="block mb-2 ">Description</label>
           <textarea

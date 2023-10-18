@@ -1,13 +1,15 @@
 'use client'
 import Image from 'next/image'
-import Product from './all-components/Product'
 import { useState } from 'react';
 import SearchBarSM from './all-components/SearchBar-sm';
 import { Provider } from 'react-redux'
 import Navbar from './all-components/NavBar';
 import store from '../app/redux/store'
-import BImageCarousel from '@/app/all-components/Carousel'
-import { SessionProvider } from "next-auth/react"
+import MBannerText from './all-components/MBannerText'
+import M2TopTrending from './all-components/M2TopTrending'
+import Link from 'next/link';
+
+
 import Dashboard from "./all-components/Dashboard"
 
 
@@ -26,7 +28,10 @@ export default function Home() {
       <Provider store={store}>
       <Navbar/>
       <SearchBarSM/>
-      <Dashboard/>
+      
+      {/* <Dashboard/> */}
+      {/* <M2TopTrending/> */}
+
 
       {/* <div className='flex flex-col'>
         
