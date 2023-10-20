@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Sclient } from '@/app/sanityclientsetup'
 import { useSession } from 'next-auth/react';
 
@@ -17,15 +17,11 @@ export default function NewProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [inStock, setInStock] = useState(true);
   const [productCategory, setProductCategory] = useState('');
-  const [userEmail, setUserEmail] = useState(null);
 
+  
   const { data: session } = useSession();
-  useEffect(() => {
-    if (session) { // Check if session exists
-        setUserEmail(session?.user?.email);
-        console.log(userEmail, "thisss?");
-    }
-}, []);
+  const userEmail = session?.user?.email;
+  console.log(userEmail)
 
   const categories = [
     "Sports Items",
@@ -78,163 +74,163 @@ export default function NewProduct() {
 
   }
 
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!userEmail) {
-      setNotification({
-          visible: true,
-          message: 'User email not available. Please log in again.'
-      });
-      setTimeout(() => {
-          setNotification({ visible: false, message: '' });
-      }, 3000);
-      return; // Exit the function early
-  }
-    
-
-
-    if (productImages.length === 0) {
-      setNotification({ visible: true, message: 'Please select an image first.' });
-      setTimeout(() => {
-        setNotification({ visible: false, message: '' });
-      }, 2000);
-      return;
-    }
-
-    let errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
-    setIsLoading(true)
-
-    // Upload image(s) to Sanity
-    console.log(productImages, "checking")
-    let imageReferences = [];
-    let uploadedSanityImageIds = [];
-
-    for (let image of productImages) {
-      // 1. Upload the image asset
-      try {
-        const uploadedImageAsset = await Sclient.assets.upload('image', image);
-        uploadedSanityImageIds.push(uploadedImageAsset._id); 
-
-        // 2. Create imageData with _id from uploaded asset
-        const imageData = {
-          _type: 'productImage',
-          image: {
-            _type: 'image',
-            asset: {
-              _ref: uploadedImageAsset._id,
-              _type: 'reference'
-            }
-          },
-          description: `${productDescription}`
-        };
-
-        // 3. Create the productImage document
-        const createdImageDoc = await Sclient.create(imageData);
-        if (!createdImageDoc || !createdImageDoc._id) {
-          setIsLoading(false);
-          throw new Error("Failed to create the image document or received an unexpected response from Sanity.");
-        }
-        imageReferences.push({ _ref: createdImageDoc._id, _type: 'reference' });
-        console.log(imageReferences, 'check')
-      }
-      catch (error) {
-        console.error("Error uploading image:", error); // For developer to see
-        setIsLoading(false);
-      }
-    }
-
-    // 3. Check if imageReferences is populated
-    if (imageReferences.length === 0) {
-      setModal({ visible: true, message: 'Unable to process the image. Please try again.', color: 'text-red-500' });
-      setTimeout(() => {
-        setModal({ visible: false, message: '' });
-      }, 3000);
-      return;
-    }
-
-
-    const imageUrls = [];
-    for (let imageRef of imageReferences) {
-      console.log(imageRef._ref)
-      const url = await constructImageUrl(imageRef._ref);
-
-      if (url) {
-        imageUrls.push(url);
-      }
-    }
-    console.log(imageUrls, 'URLs of uploaded images');
-
-
-
-
-
-
-    const productData = {
-      userEmail: userEmail,
-      name: productName,
-      description: productDescription,
-      price: productPrice,
-      quantity: productQuantity,
-      urls: imageUrls,
-      imageReferences: imageReferences,
-      inStock: inStock,
-      category: productCategory,
-      is_trending: true,
-    };
-
+  const addOrUpdateCategory = async () => {
     try {
-      const response = await fetch('/api/newproductandcategory', {
+      console.log("hello poineer")
+      // Make a request to check if the category exists in C-collection
+      const response = await fetch('/api/checkAndUpdateCategory', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify({ category }), // send the category to the API route
       });
 
       if (!response.ok) {
-        // MongoDB POST failed. Deleting images from Sanity:
-        for (let imageId of uploadedSanityImageIds) {
-          try {
-              await Sclient.delete(imageId);
-          } catch (deleteError) {
-              console.error(`Error deleting image with ID ${imageId}:`, deleteError);
-          }
-      }
-        setIsLoading(false);
-        console.error(`Error : ${response.status} - ${response.statusText}`);
-        // handle the error, maybe set an error state or show a notification to the user
-        return;
+        console.error(`Error adding or updating category : ${response.status} - ${response.statusText}`);
+        return
       }
     } catch (error) {
-      setIsLoading(false);
-      console.error("Error submitting product:", error);
-      alert('An error occurred. Please try again.');
-      
+      console.error("Error with add or update category process:", error);
+      return
     }
+  }
 
-    setIsLoading(false);
-    setModal({
-      visible: true,
-      message: 'Data uploaded successfully!',
-      color: 'text-green-500'
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    setTimeout(() => {
-      setModal({ visible: false, message: '' });
-    }, 3000);
+    await addOrUpdateCategory(productCategory);
 
-    setProductImages([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+
+
+    // if (productImages.length === 0) {
+    //   setNotification({ visible: true, message: 'Please select an image first.' });
+    //   setTimeout(() => {
+    //     setNotification({ visible: false, message: '' });
+    //   }, 2000);
+    //   return;
+    // }
+
+    // let errors = validateForm();
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
+
+    // setIsLoading(true)
+
+    // // Upload image(s) to Sanity
+    // console.log(productImages, "checking")
+    // let imageReferences = [];
+
+    // for (let image of productImages) {
+    //   // 1. Upload the image asset
+    //   try {
+    //     const uploadedImageAsset = await Sclient.assets.upload('image', image);
+
+    //     // 2. Create imageData with _id from uploaded asset
+    //     const imageData = {
+    //       _type: 'productImage',
+    //       image: {
+    //         _type: 'image',
+    //         asset: {
+    //           _ref: uploadedImageAsset._id,
+    //           _type: 'reference'
+    //         }
+    //       },
+    //       description: `${productDescription}`
+    //     };
+
+    //     // 3. Create the productImage document
+    //     const createdImageDoc = await Sclient.create(imageData);
+    //     if (!createdImageDoc || !createdImageDoc._id) {
+    //       setIsLoading(false);
+    //       throw new Error("Failed to create the image document or received an unexpected response from Sanity.");
+    //     }
+    //     imageReferences.push({ _ref: createdImageDoc._id, _type: 'reference' });
+    //     console.log(imageReferences, 'check')
+    //   }
+    //   catch (error) {
+    //     console.error("Error uploading image:", error); // For developer to see
+    //   }
+    // }
+
+    // // 3. Check if imageReferences is populated
+    // if (imageReferences.length === 0) {
+    //   setModal({ visible: true, message: 'Unable to process the image. Please try again.', color: 'text-red-500' });
+    //   setTimeout(() => {
+    //     setModal({ visible: false, message: '' });
+    //   }, 3000);
+    //   return;
+    // }
+
+
+    // const imageUrls = [];
+    // for (let imageRef of imageReferences) {
+    //   console.log(imageRef._ref)
+    //   const url = await constructImageUrl(imageRef._ref);
+
+    //   if (url) {
+    //     imageUrls.push(url);
+    //   }
+    // }
+    // console.log(imageUrls, 'URLs of uploaded images');
+
+
+
+
+
+
+    // const productData = {
+    //   userEmail: userEmail,
+    //   name: productName,
+    //   description: productDescription,
+    //   price: productPrice,
+    //   quantity: productQuantity,
+    //   urls: imageUrls,
+    //   imageReferences: imageReferences,
+    //   inStock: inStock,
+    //   category: productCategory,
+    //   is_trending: true,
+    // };
+
+    // try {
+    //   const response = await fetch('/api/newproduct', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(productData),
+    //   });
+
+    //   if (!response.ok) {
+    //     setIsLoading(false);
+    //     console.error(`Error : ${response.status} - ${response.statusText}`);
+    //     // handle the error, maybe set an error state or show a notification to the user
+    //     return;
+    //   }
+    // } catch (error) {
+    //   setIsLoading(false);
+    //   console.error("Error submitting product:", error);
+    //   alert('An error occurred. Please try again.');
+    // }
+
+    // setIsLoading(false);
+    // setModal({
+    //   visible: true,
+    //   message: 'Data uploaded successfully!',
+    //   color: 'text-green-500'
+    // });
+
+    // setTimeout(() => {
+    //   setModal({ visible: false, message: '' });
+    // }, 3000);
+
+    // setProductImages([]);
+    // if (fileInputRef.current) {
+    //   fileInputRef.current.value = "";
+    // }
+
 
   };
 
