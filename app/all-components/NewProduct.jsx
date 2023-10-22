@@ -188,6 +188,7 @@ export default function NewProduct() {
       inStock: inStock,
       category: productCategory,
       is_trending: true,
+      isDeleted:false,
     };
 
     try {

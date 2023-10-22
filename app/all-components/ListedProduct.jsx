@@ -3,7 +3,10 @@ import Products from './Products';
 import { useSession } from 'next-auth/react';
 
 
+
+
 const ListedProduct = () => {
+    const [notification, setNotification] = useState({ visible: false, message: '' });
     const [products, setProducts] = useState([]);
     const { data: session } = useSession();
     const userEmail = session?.user?.email;
@@ -16,7 +19,7 @@ const ListedProduct = () => {
             const response = await fetch(`/api/productdatachange/${productToUpdate._id}`, {
                 method: 'PUT',
                 headers: {
-                    'User-Email': userEmail,  
+                    'User-Email': userEmail,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ inStock: newInStockValue }),
@@ -31,11 +34,16 @@ const ListedProduct = () => {
                         : product
                 ));
                 console.log("Updated successfully!");
+                
             } else {
                 console.error("Failed to update product.");
+                
+                return;
             }
         } catch (error) {
             console.error("Error:", error);
+            
+            return;
         }
     };
 
@@ -46,11 +54,42 @@ const ListedProduct = () => {
         if (!confirmation) return;
 
         try {
+            // First, mark the product as deleted (isDeleted: true) with a PUT request
+            const markAsDeletedResponse = await fetch(`/api/productdatachange/${product._id}`, {
+                method: 'PUT',
+                headers: {
+                    'User-Email': userEmail,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ isDeleted: true }), // Update isDeleted to true
+            });
+
+            if (!markAsDeletedResponse.ok) {
+                console.error("Failed to mark product as deleted.");
+                setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
+                return;
+            }
+            
+            // // Remove the product from the UI by filtering it out
+             setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
+             console.log("chnage and return")
+            
+        } catch (error) {
+            console.error("Error:", error);
+            setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
+            return;
+        }
+
+
+
+        
+
+        try {
             const response = await fetch(`/api/productdatachange/${product._id}`, {
                 method: 'DELETE',
                 headers: {
-                    'User-Email': userEmail,                    
-                  },
+                    'User-Email': userEmail,
+                },
 
             });
 
@@ -72,13 +111,13 @@ const ListedProduct = () => {
 
     const fetchProducts = async () => {
         try {
-             
+
 
             const response = await fetch(`/api/listedproduct?timestamp=${new Date().getTime()}`, {
                 headers: {
-                  'User-Email': userEmail,                    // Adjust the URL to your products endpoint
+                    'User-Email': userEmail,                    // Adjust the URL to your products endpoint
                 },
-              });
+            });
             const data = await response.json();
             console.log(data)
             setProducts(data);
@@ -97,11 +136,13 @@ const ListedProduct = () => {
 
     return (
         <div>
-            <h2 className="text-xl mb-4">Your Products</h2>
-            {products.map(product => (
+        <h2 className="text-xl mb-4">Your Products</h2>
+        {products
+            .filter(product => !product.isDeleted)  // This is the filter
+            .map(product => (
                 <Products key={product._id} product={product} handleStockChange={handleStockChange} handleDelete={handleDelete} />
             ))}
-        </div>
+    </div>
     );
 }
 

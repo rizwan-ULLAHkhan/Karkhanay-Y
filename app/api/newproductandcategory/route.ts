@@ -12,13 +12,14 @@ interface ProductRequestBody {
   inStock: boolean;
   category: string;
   is_trending: boolean;
+  isDeleted:boolean;
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
   console.log("POST function accessed");
   const data = await req.json();
   
-  const { userEmail, name, description, price, quantity, urls, imageReferences, inStock, category, is_trending } = data as ProductRequestBody;
+  const { userEmail, name, description, price, quantity, urls, imageReferences, inStock, category, is_trending,isDeleted } = data as ProductRequestBody;
 
   const client = await clientPromise;
   const db = client.db('Karkhanay');
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     inStock,
     category,
     is_trending,
+    isDeleted,
     createdAt: new Date(),
   };
 
