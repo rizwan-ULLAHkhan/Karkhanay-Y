@@ -27,28 +27,28 @@ export async function POST(req: NextRequest, res: NextResponse) {
   // Category logic
   const categoryCollection = db.collection('Categories-collection');
   
-  // Check if category exists
-  const existingCategory = await categoryCollection.findOne({ name: category });
-  let categoryAdded = false;  // A flag to track if we added a category
+  // // Check if category exists
+  // const existingCategory = await categoryCollection.findOne({ name: category });
+  // let categoryAdded = false;  // A flag to track if we added a category
 
-  // If category doesn't exist, insert it
-  if (!existingCategory) {
-    try {
-      await categoryCollection.insertOne({ name: category, count: 1 }); // Initialize count as 1
-      categoryAdded = true; // Update the flag
-    } catch (error) {
-      console.error("MongoDB Error when inserting category:", (error as Error).message, (error as Error).stack);
-      return NextResponse.json({ message: 'Failed to add category', error: (error as Error).message });
-    }
-  } else {
-    // If category exists, increment its count
-    try {
-      await categoryCollection.updateOne({ name: category }, { $inc: { count: 1 } });
-    } catch (updateError) {
-      console.error("MongoDB Error when updating category count:", (updateError as Error).message, (updateError as Error).stack);
-      // Handle this error appropriately, perhaps returning a response or continuing with the next steps
-    }
-  }
+  // // If category doesn't exist, insert it
+  // if (!existingCategory) {
+  //   try {
+  //     await categoryCollection.insertOne({ name: category, count: 1 }); // Initialize count as 1
+  //     categoryAdded = true; // Update the flag
+  //   } catch (error) {
+  //     console.error("MongoDB Error when inserting category:", (error as Error).message, (error as Error).stack);
+  //     return NextResponse.json({ message: 'Failed to add category', error: (error as Error).message });
+  //   }
+  // } else {
+  //   // If category exists, increment its count
+  //   try {
+  //     await categoryCollection.updateOne({ name: category }, { $inc: { count: 1 } });
+  //   } catch (updateError) {
+  //     console.error("MongoDB Error when updating category count:", (updateError as Error).message, (updateError as Error).stack);
+  //     // Handle this error appropriately, perhaps returning a response or continuing with the next steps
+  //   }
+  // }
 
   // Proceed with product insertion
   const productCollection = db.collection('Ks-collection');
@@ -63,34 +63,63 @@ export async function POST(req: NextRequest, res: NextResponse) {
     imageReferences,
     inStock,
     category,
-    is_trending,
     isDeleted,
+    is_trending,
     createdAt: new Date(),
   };
 
+  let insertedProductId;
+  
   try {
     const result = await productCollection.insertOne(newProduct);
-    console.log("Insert result:", result);
-    return NextResponse.json({ message: 'Product created successfully!' });
+    insertedProductId = result.insertedId;
   } catch (error) {
     console.error("MongoDB Error when inserting product:", (error as Error).message, (error as Error).stack);
-    
-    // If the product insertion failed and we added a category, let's rollback (decrement the count or delete) that category
-    if (categoryAdded) {
-      try {
-        await categoryCollection.deleteOne({ name: category });
-      } catch (deleteError) {
-        console.error("Error during rollback - couldn't delete category:", (deleteError as Error).message, (deleteError as Error).stack);
-      }
-    } else {
-      // If it was an existing category, decrement its count
-      try {
-        await categoryCollection.updateOne({ name: category }, { $inc: { count: -1 } });
-      } catch (updateError) {
-        console.error("Error during rollback - couldn't decrement category count:", (updateError as Error).message, (updateError as Error).stack);
-      }
-    }
-
     return NextResponse.json({ message: 'Failed to create product', error: (error as Error).message });
   }
+
+  // Check if category exists
+  const existingCategory = await categoryCollection.findOne({ name: category });
+
+  // If category doesn't exist, insert it
+  if (!existingCategory) {
+    try {
+      const newCategoryData = { 
+        name: category, 
+        productIds: [insertedProductId],
+        trendingProductIDs: is_trending ? [insertedProductId] : [] // Only add if is_trending is true
+    };
+    await categoryCollection.insertOne(newCategoryData); 
+  } catch (error) {
+      console.error("MongoDB Error when inserting category:", (error as Error).message, (error as Error).stack);
+      // Rollback: Delete the previously inserted product
+      await productCollection.deleteOne({ _id: insertedProductId });
+      return NextResponse.json({ message: 'Failed to add category', error: (error as Error).message });
+  }
+  } else {
+    // If category exists, push the product's ID to its productIds list
+    try {
+        await categoryCollection.updateOne(
+            { name: category }, 
+            { 
+                $push: { 
+                    productIds: insertedProductId,
+                    trendingProductIDs: is_trending ? insertedProductId : undefined // Only add if is_trending is true
+                }
+            }
+        );
+    } catch (updateError) {
+        console.error("MongoDB Error when updating category product IDs:", (updateError as Error).message, (updateError as Error).stack);
+        // Rollback: Delete the previously inserted product
+        await productCollection.deleteOne({ _id: insertedProductId });
+        return NextResponse.json({ message: 'Failed to update category', error: (updateError as Error).message });
+    }
 }
+
+  return NextResponse.json({ message: 'Product created successfully!' });
+}
+
+
+
+
+
