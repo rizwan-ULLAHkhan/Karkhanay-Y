@@ -1,25 +1,23 @@
 "use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
 
 const CombinedFeature = () => {
-  const [categories, setCategories] = useState([]);
+  const [categoriesWithTrending, setCategoriesWithTrending] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // fetching categories from a "backend".
   useEffect(() => {
-    const fetchCategories = async () => {
+    async function fetchCategoriesWithTrending() {
       setLoading(true);
       try {
         const response = await fetch('/api/getCategories');
         const data = await response.json();
         if (response.ok) {
-          setCategories(data);
-          setSelectedCategory(data[0]);  // Set the first category by default
+          setCategoriesWithTrending(data);
+          setSelectedCategory(data[0]?.categoryName);
         } else {
           setError(data.message);
         }
@@ -28,110 +26,73 @@ const CombinedFeature = () => {
       } finally {
         setLoading(false);
       }
-    };
-    fetchCategories();
+    }
+    fetchCategoriesWithTrending();
   }, []);
 
-
-  // Pseudo-fetch featured products for a category.
-  useEffect(() => {
-    let fetchedProducts = [];
-    switch (selectedCategory) {
-      case "Sports Items":
-        fetchedProducts = trending1List;  // You already defined this in your code.
-        break;
-      case "Medical Supplies":
-        fetchedProducts = trending2List;
-        break;
-      case "Minerals":
-        fetchedProducts = trending3List;
-        break;
-      case "Agricultural":
-        fetchedProducts = trending4List;
-        break;
-      default:
-        fetchedProducts = [];
-    }
-    setFeaturedProducts(fetchedProducts);
-  }, [selectedCategory]);
+  const featuredProducts = selectedCategory 
+    ? categoriesWithTrending.find(cat => cat.categoryName === selectedCategory)?.trendingProducts 
+    : [];
 
   return (
-    <section className="w-full md:px-2.5 lg:px-4 flex-center flex-col mt-8 lg:mt-12">
-      <div className="relative flex-row justify-between w-full pb-1">
-        <div className="flex px-2.5 md:py-2.5 py-4 text-2xl font-bold leading-[1.15] text-gray-800 sm:text-3xl text-left">
-          Top Trending Products in {selectedCategory}
-        </div>
+    <section className="w-full md:px-4 lg:px-6 mt-8 lg:mt-12 bg-gray-50 p-4">
+      <div className="flex justify-between items-center pb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+          {loading ? 'Loading...' : `Top Trending Products in ${selectedCategory}`}
+        </h1>
       </div>
 
-      <div className="category-bar flex flex-row flex-wrap w-full pb-4">
-        {categories.map((category) => (
+      {error && <p className="text-red-500 mt-2 mb-4">{error}</p>}
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {categoriesWithTrending.map((category) => (
           <button
-            key={category}
-            className={`p-2 mx-1 mb-2 ${category === selectedCategory
-                ? "bg-lime-300 text-white"
-                : "bg-lime-100"
+            key={category.categoryName}
+            className={`p-2 rounded shadow ${category.categoryName === selectedCategory
+                ? "bg-lime-500 text-white"
+                : "bg-lime-200 text-gray-800"
               }`}
-            onClick={() => setSelectedCategory(category)}
+            onClick={() => setSelectedCategory(category.categoryName)}
           >
-            {category}
+            {category.categoryName}
           </button>
         ))}
       </div>
 
-      <div className="flex flex-row flex-wrap w-full">
-        <div className="flex-col w-full bg-lime-200">
-          <div className="flex-col px-1">
-            {featuredProducts.map((product) => (
-              <Link
-                href=""
-                onClick={() => { }}
-                key={product.id}
-                className={`flex w-full h-[108px] border-2 border-gray-300 bg-gray-100 rounded-md hover:bg-lime-100 mb-0.5`}
-              >
-                <div className="flex flex-col">
-                  <div className={`p-0.5 pr-2 flex w-full flex-row`}>
-                    <div className="relative flex flex-shrink-0 p-0.5">
-                      <Image
-                        src={product.imageSrc}
-                        alt={product.description}
-                        width={80}
-                        height={80}
-                        className="object-contain rounded-md"
-                      />
-                    </div>
-                    <div className="pl-0.5 flex flex-col justify-between flex-shrink">
-                      <span className="bg-yellow-300 text-xs px-2 py-1 rounded">Featured</span>
-                      <p className="md:text-sm overflow-ellipsis overflow-hidden wrap line-clamp-3 text-xs md:line-clamp-3">
-                        {product.description}
-                      </p>
-                      <div className="pt-1">
-                        <p className="text-xs font-semibold overflow-ellipsis overflow-hidden line-clamp-1">
-                          {product.price}
-                        </p>
-                        <p className="text-xs overflow-ellipsis overflow-hidden line-clamp-1">
-                          <span className="font-semibold pr-0.5">MOQ:</span>
-                          {product.moq}
-                        </p>
-                      </div>
-                    </div>
+      <div className="p-4 bg-Kgray border rounded shadow">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6 lg:mx-20 ">
+          {featuredProducts.map((product) => (
+            <Link href="#" key={product._id} className=" p-8 border rounded shadow-md hover:bg-lime-50 transition bg-white mt-3">
+               
+                <div className="flex items-center gap-4 mb-2 flex-col">
+                  <div className="w-36 h-56 relative min-w-full">
+                    <Image
+                      src={product.urls[0]}
+                      alt={product.description}
+                      layout="fill"
+                      objectFit="contain"
+                      className="rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold group-hover:text-lime-500">{product.name}</h2>
+                    <p className="text-sm text-gray-600 mt-1">In this version, I've wrapped the grid of product cards inside a parent div with a white background and a border to make it feel like a single cohesive card. This adds a layer of hierarchy to the design, which can make the content feel more organized and contained.</p>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+                <div className="flex justify-between items-center mt-4">
+                  <span className="text-lg font-bold">{product.price}</span>
+                  <span className="text-sm bg-yellow-300 px-2 py-1 rounded-full">Featured</span>
+                </div>
+              
+            </Link>
+          ))}
         </div>
-      </div>
-      <div className="flex-row justify-end bg-lime-300 w-full">
-        <button className="hover:bg-lime-200 w-full h-full">
-          <h1 className="underline underline-offset-8 justify-end flex px-2.5 md:py-2.5 pb-3 mt-2 text-xl font-bold leading-[1.15] text-black text-right">
-            View All Trending Products
-          </h1>
-        </button>
+        <div className="text-right mt-4">
+          <button className="text-Kgreen border p-2 font-semibold hover:underline">View All Trending Products</button>
+        </div>
       </div>
     </section>
   );
 };
 
 export default CombinedFeature;
-
-// You'll still need to include the "trending1List", "trending2List", "trending3List", and "trending4List" from your original code.

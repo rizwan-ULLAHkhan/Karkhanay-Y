@@ -26,11 +26,11 @@ export default function Home() {
     
     <main className="">
       <Provider store={store}>
-      <Navbar/>
+      
       <SearchBarSM/>
       
       {/* <Dashboard/> */}
-      {/* <M2TopTrending/> */}
+      <M2TopTrending/>
 
 
       {/* <div className='flex flex-col'>

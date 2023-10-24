@@ -1,8 +1,10 @@
+'use client'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import NavBar from './all-components/NavBar'
 import AuthProvider from '../components/Authprovider/Authprovider'
+import Navbar from './all-components/NavBar';
 
 
  
@@ -26,7 +28,7 @@ export default function RootLayout({
         
       
         <AuthProvider>
-        
+        <Navbar/>
         {children}
         </AuthProvider>
         

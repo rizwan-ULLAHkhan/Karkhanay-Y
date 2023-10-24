@@ -11,12 +11,12 @@ const NavBar = () => {
 
   return (
     <nav className=" bg-slate-700 flex items-center justify-between px-3 shadow-lg">
-      <div className="flex items-center font-mono gap-2">
+      <Link className="flex items-center font-mono gap-2" href='/'>
         <div className="py-1  mb-1 ">
           <Image className='' src="/logo.png" alt="Logo" width={42} height={42} />
         </div>
         <div className=" text-white font-bold text-lg ">Karkhanay</div>
-      </div>
+      </Link>
 
       <SearchBar onSearch='' />
 
