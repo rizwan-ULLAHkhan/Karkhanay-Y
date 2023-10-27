@@ -1,9 +1,9 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react';
-import SearchBarSM from './all-components/SearchBar-sm';
+
 import { Provider } from 'react-redux'
-import Navbar from './all-components/NavBar';
+import HeroSection from '@/app/all-components/HeroSection'
 import store from '../app/redux/store'
 import MBannerText from './all-components/MBannerText'
 import M2TopTrending from './all-components/M2TopTrending'
@@ -27,18 +27,16 @@ export default function Home() {
     <main className="">
       <Provider store={store}>
       
-      <SearchBarSM/>
       
-      {/* <Dashboard/> */}
+      <HeroSection/>
+      
+      
       <M2TopTrending/>
-
-
-      {/* <div className='flex flex-col'>
-        
       
-      <BImageCarousel imageUrls={imageUrls} idforswipe={1}/>
-      <Product/>
-      </div> */}
+      
+
+
+      
       </Provider>
     </main>
   )

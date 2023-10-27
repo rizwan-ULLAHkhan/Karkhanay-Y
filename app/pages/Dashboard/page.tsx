@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 md:p-8">
-      <div className="border-b-2 mb-4">
+      <div className="border-b-2 mb-4 flex justify-center gap-4">
         <button
           className={`py-2 px-4 ${activeTab === 1 ? 'border-b-2 border-blue-600' : ''}`}
           onClick={() => setActiveTab(1)}

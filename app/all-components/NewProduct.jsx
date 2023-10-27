@@ -241,9 +241,9 @@ export default function NewProduct() {
 
 
   return (
-    <div>
+    <div className=' flex flex-col items-center '>
       <h2 className="text-xl mb-4">Add New Product</h2>
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4 lg:w-1/2" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="productName" className="block mb-2">Product Name</label>
           <input

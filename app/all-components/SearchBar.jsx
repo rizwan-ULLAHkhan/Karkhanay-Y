@@ -1,6 +1,7 @@
-'use client'
+'use client';
+
 import { useState } from 'react';
-import { FiSearch } from 'react-icons/fi'; // You might need to install this package
+import { FiSearch } from 'react-icons/fi'; 
 
 const SearchBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,18 +10,25 @@ const SearchBar = ({ onSearch }) => {
     onSearch(searchTerm);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
-    <div className="hidden sm:flex  border-2 hover:border-Kgreen rounded-lg shadow-lg  ">
+    <div className="flex items-center bg-transparent sm:w-1/2 w-full mx-4 my-2 ">
       <input
         type="text"
-        placeholder=" Search products..."
+        placeholder="Search products..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="bg-transparent border-none outline-none w-full text-white mr-1"
+        onKeyDown={handleKeyDown}
+        className="flex-1 bg-transparent border-2 md:border-transparent rounded-l-lg md:hover:border-Kgreen outline-none text-white pl-2 py-1 transition duration-300 border-Kgreen"
       />
       <button
         onClick={handleSearch}
-        className="bg-Kgray text-white rounded-md px-4 py-1.5 ml-2"
+        className="bg-orange-400 text-white rounded-r-lg px-5 py-1.5 border-Kgreen border-2 md:border-none hover:bg-Kgreen transition duration-300 ml-2"
       >
         <FiSearch />
       </button>

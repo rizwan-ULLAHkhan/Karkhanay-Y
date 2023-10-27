@@ -13,6 +13,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       screens: {
+        'xs': '350px',
         'sm': '580px',
         'md': '768px',
         'lg': '1024px',
@@ -23,7 +24,9 @@ module.exports = {
         cyan: '#A1FFF7',
         heather: '#B8AEDA',
         Kgreen:'#8cc43c',
-        Kgray:'#808080'
+        Kgray:'#808080',
+        Korange: '#D2691E',
+        Kblue: '#003366'
       },
     },
   },

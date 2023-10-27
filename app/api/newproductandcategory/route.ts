@@ -27,28 +27,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   // Category logic
   const categoryCollection = db.collection('Categories-collection');
   
-  // // Check if category exists
-  // const existingCategory = await categoryCollection.findOne({ name: category });
-  // let categoryAdded = false;  // A flag to track if we added a category
 
-  // // If category doesn't exist, insert it
-  // if (!existingCategory) {
-  //   try {
-  //     await categoryCollection.insertOne({ name: category, count: 1 }); // Initialize count as 1
-  //     categoryAdded = true; // Update the flag
-  //   } catch (error) {
-  //     console.error("MongoDB Error when inserting category:", (error as Error).message, (error as Error).stack);
-  //     return NextResponse.json({ message: 'Failed to add category', error: (error as Error).message });
-  //   }
-  // } else {
-  //   // If category exists, increment its count
-  //   try {
-  //     await categoryCollection.updateOne({ name: category }, { $inc: { count: 1 } });
-  //   } catch (updateError) {
-  //     console.error("MongoDB Error when updating category count:", (updateError as Error).message, (updateError as Error).stack);
-  //     // Handle this error appropriately, perhaps returning a response or continuing with the next steps
-  //   }
-  // }
 
   // Proceed with product insertion
   const productCollection = db.collection('Ks-collection');

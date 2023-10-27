@@ -5,7 +5,8 @@ import { Inter } from 'next/font/google'
 import NavBar from './all-components/NavBar'
 import AuthProvider from '../components/Authprovider/Authprovider'
 import Navbar from './all-components/NavBar';
-
+import { Provider } from 'react-redux'
+import store from '../app/redux/store'
 
  
 
@@ -26,12 +27,12 @@ export default function RootLayout({
       
       <body className=''>
         
-      
+      <Provider store={store}>
         <AuthProvider>
         <Navbar/>
         {children}
         </AuthProvider>
-        
+        </Provider>
       </body>
     
     </html>
