@@ -1,13 +1,13 @@
 'use client'
-import Image from 'next/image';
+
 import '@/app/styles/productpage.css'
 import CustomerReviews from '../CustomerReviews'
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchData } from '@/app/redux/features/productpage/productpageSlice'
-import { useEffect } from 'react';
-import { useRouter,useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { RootState } from '@/app/redux/store'
-import { AppDispatch  } from '@/app/redux/store'
+import { AppDispatch } from '@/app/redux/store'
+import ImageSection from '../ImageSection'
 
 
 const product = {
@@ -27,71 +27,84 @@ const product = {
 
 
 
-function ProductPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-const productId = searchParams.get('productId');
-    console.log(productId,"checking product id")
+function ProductPage({ params }: { params: { productId: string } }) {
+    const [showImageSection, setShowImageSection] = useState(true);
+
+    const productId = params.productId;
+    console.log(productId, "checking product id")
     const dispatch: AppDispatch = useDispatch();
 
     const productData = useSelector((state: RootState) => state.product.product);
-    const productStatus = useSelector((state: RootState)=> state.product.status);
+    console.log(productData, "checking product data")
+    const productStatus = useSelector((state: RootState) => state.product.status);
+    const productError = useSelector((state: RootState) => state.product.error);
+
+
 
     useEffect(() => {
-        if (!productData._id || productData._id !== productId) { // Check if product data is already available
-            dispatch(fetchData()); // If not, fetch the data
+        if (productId && (!productData._id || productData._id !== productId)) { // Check if product data is already available
+            console.log("dispatch?")
+            dispatch(fetchData(productId)); // If not, fetch the data
         }
     }, [productId]);
+
+
+    useEffect(() => {
+        if (typeof window !== "undefined") { // Ensure window object is available
+            if (window.innerWidth >= 450) {
+                setShowImageSection(true);
+            } else {
+                setShowImageSection(false);
+            }
+
+            // Optional: Add event listener to handle window resize
+            const handleResize = () => {
+                if (window.innerWidth >= 450) {
+                    setShowImageSection(true);
+                } else {
+                    setShowImageSection(false);
+                }
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            // Cleanup listener on component unmount
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, []);
+    // ... inside the component render
+    if (productStatus === 'loading') {
+        return <div>Loading product...</div>;
+    }
+
+    if (productStatus === 'error') {
+        return <div>Error fetching product: {productError}</div>;
+    }
     return (
 
 
-        <div className="product-page-container">
-            <h1 className="product-title ">{productData.name}</h1>
+        <div className="product-page-container ">
+            <h1 className="product-title">{productData.name}</h1>
             {/* Product Image Section */}
-            <div className='flex gap-4'>
+            <div className='flex xl:gap-8 gap-14 flex-wrap w-full h-full'>
+                 <ImageSection productData={productData} />
 
-                <div className="product-image-section">
-
-                    {/* Main Image */}
-                    <div className=' flex h-80 w-80'>
-                        <Image
-                            src={product.mainImage}
-                            alt={productData.name}
-                            layout="responsive"
-                            width={700} // Adjust width as needed
-                            height={700} // Adjust height as needed
-                            className="main-product-image"
-                        />
-                    </div>
-
-                    {/* Thumbnail Images */}
-                    <div className="flex gap-6 ml-2">
-                        {product.thumbnails.map((thumb, index) => (
-                            <Image
-                                key={index}
-                                src={thumb}
-                                alt={`Thumbnail ${index}`}
-                                width={70}
-                                height={80}
-                                className="thumbnail"
-                            />
-                        ))}
-                    </div>
-                </div>
-
-                <div className=" flex flex-col flex-wrap gap-2 w-1/2">
+                <div className=" flex flex-col flex-wrap   gap-2 md:w-1/2">
 
                     <p className="product-price">${productData.price}</p>
                     <p className="product-description">{productData.description}</p>
-                    <button className="add-to-cart-btn">Add to Cart</button>
+                    <button className="add-to-cart-btn w-1/2">Add to Cart</button>
                 </div>
 
-                <CustomerReviews />
+
             </div>
 
-            <div className="additional-info-section">
-                <h2>Additional Information</h2>
-                <p>{product.additionalInfo}</p>
+            <div className=" flex sm:flex-row flex-col gap-10">
+                <CustomerReviews />
+                <div className='sm:w-1/2 mt-6'>
+                    <h2 className='text-lg font-bold'>Additional Information</h2>
+                    <p className='mt-6 '>{product.additionalInfo}</p>
+                </div>
             </div>
         </div>
     );

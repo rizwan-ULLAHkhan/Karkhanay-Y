@@ -5,8 +5,8 @@ interface ProductRequestBody {
   userEmail: string;
   name: string;
   description: string;
-  price: string;
-  quantity: string;
+  price: number;
+  quantity: number;
   urls: string[];
   imageReferences: string[];
   inStock: boolean;

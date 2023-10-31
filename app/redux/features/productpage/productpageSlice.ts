@@ -11,24 +11,28 @@ type Product = {
   isDeleted: boolean;
   is_trending: boolean;
   name: string;
-  price: string;  // You might want to consider using number if your price is always a numerical value
-  quantity: string; // Same comment as for price
+  price: number;  // You might want to consider using number if your price is always a numerical value
+  quantity: number; // Same comment as for price
   urls: string[];
   userEmail: string;
   _id: string;
 };
 export const fetchData = createAsyncThunk(
   'product/fetchData',
-  async () => {
-    const response = await fetch('/api/product');  // Your API endpoint here
+  async (productId:string) => {
+    const response = await fetch(`/api/getproductforproductpage/${productId}`);  // Updated API endpoint
+    if (!response.ok) {
+      throw new Error('Failed to fetch product data');
+    }
     const data = await response.json();
     return data;
   }
 );
 
+
 const productSlice = createSlice({
   name: 'product',
-  initialState: { product: {} as Product, status: 'idle', error: null as string | null },
+  initialState: { product: {} as Product, status: 'loading', error: null as string | null },
   reducers: {
     setSelectedProduct: (state, action) => {
       state.product = action.payload;

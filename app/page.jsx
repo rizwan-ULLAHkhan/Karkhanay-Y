@@ -10,6 +10,7 @@ import M2TopTrending from './all-components/M2TopTrending'
 import Link from 'next/link';
 
 
+
 import Dashboard from "./all-components/Dashboard"
 
 
@@ -25,7 +26,7 @@ export default function Home() {
   return (
     
     <main className="">
-      <Provider store={store}>
+      
       
       
       <HeroSection/>
@@ -37,7 +38,7 @@ export default function Home() {
 
 
       
-      </Provider>
+     
     </main>
   )
 }

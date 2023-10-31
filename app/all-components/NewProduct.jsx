@@ -22,10 +22,10 @@ export default function NewProduct() {
   const { data: session } = useSession();
   useEffect(() => {
     if (session) { // Check if session exists
-        setUserEmail(session?.user?.email);
-        console.log(userEmail, "thisss?");
+      setUserEmail(session?.user?.email);
+      console.log(userEmail, "thisss?");
     }
-}, []);
+  }, []);
 
   const categories = [
     "Sports Items",
@@ -85,15 +85,15 @@ export default function NewProduct() {
 
     if (!userEmail) {
       setNotification({
-          visible: true,
-          message: 'User email not available. Please log in again.'
+        visible: true,
+        message: 'User email not available. Please log in again.'
       });
       setTimeout(() => {
-          setNotification({ visible: false, message: '' });
+        setNotification({ visible: false, message: '' });
       }, 3000);
       return; // Exit the function early
-  }
-    
+    }
+
 
 
     if (productImages.length === 0) {
@@ -121,7 +121,7 @@ export default function NewProduct() {
       // 1. Upload the image asset
       try {
         const uploadedImageAsset = await Sclient.assets.upload('image', image);
-        uploadedSanityImageIds.push(uploadedImageAsset._id); 
+        uploadedSanityImageIds.push(uploadedImageAsset._id);
 
         // 2. Create imageData with _id from uploaded asset
         const imageData = {
@@ -188,7 +188,7 @@ export default function NewProduct() {
       inStock: inStock,
       category: productCategory,
       is_trending: true,
-      isDeleted:false,
+      isDeleted: false,
     };
 
     try {
@@ -204,11 +204,11 @@ export default function NewProduct() {
         // MongoDB POST failed. Deleting images from Sanity:
         for (let imageId of uploadedSanityImageIds) {
           try {
-              await Sclient.delete(imageId);
+            await Sclient.delete(imageId);
           } catch (deleteError) {
-              console.error(`Error deleting image with ID ${imageId}:`, deleteError);
+            console.error(`Error deleting image with ID ${imageId}:`, deleteError);
           }
-      }
+        }
         setIsLoading(false);
         console.error(`Error : ${response.status} - ${response.statusText}`);
         // handle the error, maybe set an error state or show a notification to the user
@@ -218,7 +218,7 @@ export default function NewProduct() {
       setIsLoading(false);
       console.error("Error submitting product:", error);
       alert('An error occurred. Please try again.');
-      
+
     }
 
     setIsLoading(false);

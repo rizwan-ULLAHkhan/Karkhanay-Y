@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDispatch } from 'react-redux';
 import { setSelectedProduct } from '../redux/features/productpage/productpageSlice';
 
+
 const CombinedFeature = () => {
   const [categoriesWithTrending, setCategoriesWithTrending] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -67,7 +68,7 @@ const CombinedFeature = () => {
           {featuredProducts.map((product) => (
             
             <Link href={`/pages/ProductPage/${product._id}`} key={product._id} className=" p-8 border-2 border-Kgreen rounded-2xl shadow-md hover:bg-lime-50 transition bg-white mt-3" onClick={() => dispatch(setSelectedProduct(product))}>
-               {console.log(product, "prodcut console")}
+               
                 <div className="flex items-center gap-4 mb-2 flex-col ">
                   <div className="w-36 h-56 relative min-w-full">
                     <Image

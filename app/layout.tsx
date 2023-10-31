@@ -4,11 +4,11 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import NavBar from './all-components/NavBar'
 import AuthProvider from '../components/Authprovider/Authprovider'
-import Navbar from './all-components/NavBar';
 import { Provider } from 'react-redux'
-import store from '../app/redux/store'
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from '../app/redux/store'
 
- 
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,17 +24,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      
+
       <body className=''>
-        
-      <Provider store={store}>
-        <AuthProvider>
-        <Navbar/>
-        {children}
-        </AuthProvider>
+
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <AuthProvider>
+              <NavBar />
+              {children}
+            </AuthProvider>
+          </PersistGate>
         </Provider>
       </body>
-    
+
     </html>
   )
 }

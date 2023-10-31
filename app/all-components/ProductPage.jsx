@@ -3,10 +3,10 @@ import '../styles/productpage.css'
 
 function ProductPage({ product }) {
     return (
-        <div className="product-page-container">
+        <div className="product-page-container ">
             
             {/* Product Image Section */}
-            <div className="product-image-section">
+            <div className="product-image-section flex-wrap">
                 {/* Main Image */}
                 <Image 
                     src={product.mainImage} 

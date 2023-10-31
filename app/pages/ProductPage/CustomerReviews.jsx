@@ -22,7 +22,7 @@ const reviews = [
 
 const CustomerReviews = () => {
     return (
-        <div className="reviews-container bg-white p-4 rounded shadow-md flex flex-col w-1/3">
+        <div className=" bg-white p-4 rounded shadow-md flex flex-col  sm:w-1/2 ">
             <h2 className="text-lg font-bold mb-4">Customer Reviews</h2>
             {reviews.map((review, index) => (
                 <div key={index} className="review-box border-t border-gray-200 pt-">
