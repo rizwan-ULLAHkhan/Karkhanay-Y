@@ -14,6 +14,7 @@ type Product = {
   price: number;  // You might want to consider using number if your price is always a numerical value
   quantity: number; // Same comment as for price
   urls: string[];
+  userId:string;
   userEmail: string;
   _id: string;
 };
@@ -25,6 +26,7 @@ export const fetchData = createAsyncThunk(
       throw new Error('Failed to fetch product data');
     }
     const data = await response.json();
+    console.log(data, "response is ok")
     return data;
   }
 );
@@ -36,6 +38,7 @@ const productSlice = createSlice({
   reducers: {
     setSelectedProduct: (state, action) => {
       state.product = action.payload;
+      state.status = 'succeeded';
     }
   },
   extraReducers: builder => {

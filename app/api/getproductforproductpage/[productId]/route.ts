@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 
 // Named export for handling GET requests
 export async function GET(req: NextRequest, context: { params: any }) {
-  console.log("GET function accessed");
+  console.log("GET function accessed gettt");
   
   const productId = context.params['productId']; // Extract the productId from the URL
   console.log(productId, "product IID")
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest, context: { params: any }) {
     if (!product) {
       return NextResponse.json({ message: 'Product not found' });
     }
-
+    console.log("found the dataaaaaaaaaaaaaaaaaaaaaaa")
     return NextResponse.json(product);  // Send the product data as response
 
   } catch (error) {

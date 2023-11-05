@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from 'next/server';
 
 interface ProductRequestBody {
   userEmail: string;
+  userId:string;
   name: string;
   description: string;
   price: number;
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   console.log("POST function accessed");
   const data = await req.json();
   
-  const { userEmail, name, description, price, quantity, urls, imageReferences, inStock, category, is_trending,isDeleted } = data as ProductRequestBody;
+  const { userId,userEmail, name, description, price, quantity, urls, imageReferences, inStock, category, is_trending,isDeleted } = data as ProductRequestBody;
 
   const client = await clientPromise;
   const db = client.db('Karkhanay');
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const productCollection = db.collection('Ks-collection');
 
   const newProduct = {
+    userId,
     userEmail,
     name,
     description,

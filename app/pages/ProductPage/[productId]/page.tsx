@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react';
 import { RootState } from '@/app/redux/store'
 import { AppDispatch } from '@/app/redux/store'
 import ImageSection from '../ImageSection'
+import ChatInterface from '../ChatInterface'; // Import your chat interface component
+import { useSession } from 'next-auth/react';
+
 
 
 const product = {
@@ -28,18 +31,23 @@ const product = {
 
 
 function ProductPage({ params }: { params: { productId: string } }) {
-    const [showImageSection, setShowImageSection] = useState(true);
+    const [conversationId, setConversationId] = useState("");
+    const [showChat, setShowChat] = useState(false);
+    const [buyerId, setBuyerId] = useState("")
+
+
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        if (session) { // Check if session exists
+            setBuyerId(session?.user.id,)
+        }
+    }, []);
+
 
     const productId = params.productId;
     console.log(productId, "checking product id")
     const dispatch: AppDispatch = useDispatch();
-
-    const productData = useSelector((state: RootState) => state.product.product);
-    console.log(productData, "checking product data")
-    const productStatus = useSelector((state: RootState) => state.product.status);
-    const productError = useSelector((state: RootState) => state.product.error);
-
-
 
     useEffect(() => {
         if (productId && (!productData._id || productData._id !== productId)) { // Check if product data is already available
@@ -49,37 +57,56 @@ function ProductPage({ params }: { params: { productId: string } }) {
     }, [productId]);
 
 
-    useEffect(() => {
-        if (typeof window !== "undefined") { // Ensure window object is available
-            if (window.innerWidth >= 450) {
-                setShowImageSection(true);
-            } else {
-                setShowImageSection(false);
-            }
+    const productData = useSelector((state: RootState) => state.product.product);
+    console.log(productData, "checking product data")
+    console.log(productData.userId, "checking vendor id")
+    const productStatus = useSelector((state: RootState) => state.product.status);
+    const productError = useSelector((state: RootState) => state.product.error);
 
-            // Optional: Add event listener to handle window resize
-            const handleResize = () => {
-                if (window.innerWidth >= 450) {
-                    setShowImageSection(true);
-                } else {
-                    setShowImageSection(false);
-                }
-            };
 
-            window.addEventListener('resize', handleResize);
 
-            // Cleanup listener on component unmount
-            return () => window.removeEventListener('resize', handleResize);
-        }
-    }, []);
-    // ... inside the component render
+
+
+
     if (productStatus === 'loading') {
+        console.log(productStatus)
         return <div>Loading product...</div>;
     }
 
     if (productStatus === 'error') {
         return <div>Error fetching product: {productError}</div>;
     }
+
+
+    const handleChatWithSeller = async () => {
+
+        if (!session) {
+            alert("please sign in first")
+            return
+        }
+
+        setShowChat(true); // Display chat interface
+
+        // Add the logic to make API call
+        try {
+            const response = await fetch('/api/conversations/initiate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    buyerId: session.user.id, // Replace with actual buyerId
+                    vendorId: productData.userId // Replace with actual vendorId
+                }),
+            });
+
+            const data = await response.json();
+            
+            setConversationId(data.conversationId);
+            console.log(data.conversationId, "conversation id")
+        } catch (error) {
+            console.error("Error initiating conversation:", error);
+        }
+    };
+    
     return (
 
 
@@ -87,13 +114,14 @@ function ProductPage({ params }: { params: { productId: string } }) {
             <h1 className="product-title">{productData.name}</h1>
             {/* Product Image Section */}
             <div className='flex xl:gap-8 gap-14 flex-wrap w-full h-full'>
-                 <ImageSection productData={productData} />
+                <ImageSection productData={productData} />
 
                 <div className=" flex flex-col flex-wrap   gap-2 md:w-1/2">
 
                     <p className="product-price">${productData.price}</p>
                     <p className="product-description">{productData.description}</p>
                     <button className="add-to-cart-btn w-1/2">Add to Cart</button>
+                    <button className="add-to-cart-btn w-1/2" onClick={handleChatWithSeller}>Chat with Seller</button>
                 </div>
 
 
@@ -105,7 +133,18 @@ function ProductPage({ params }: { params: { productId: string } }) {
                     <h2 className='text-lg font-bold'>Additional Information</h2>
                     <p className='mt-6 '>{product.additionalInfo}</p>
                 </div>
+
             </div>
+            {showChat && (
+                <ChatInterface
+                    onClose={() => setShowChat(false)}
+                    buyerId={buyerId}
+                    vendorId={productData.userId}
+                    conversationId={conversationId}
+
+                    
+                />
+            )}
         </div>
     );
 }

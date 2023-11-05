@@ -17,13 +17,18 @@ export default function NewProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [inStock, setInStock] = useState(true);
   const [productCategory, setProductCategory] = useState('');
-  const [userEmail, setUserEmail] = useState(null);
+  const [userEmail, setUserEmail] = useState("");
+  const [userId,setUserId]=useState(null)
 
   const { data: session } = useSession();
   useEffect(() => {
     if (session) { // Check if session exists
       setUserEmail(session?.user?.email);
-      console.log(userEmail, "thisss?");
+      setUserId(session?.user.id)
+      console.log(session?.user.id)
+    
+    
+      
     }
   }, []);
 
@@ -178,6 +183,7 @@ export default function NewProduct() {
 
 
     const productData = {
+      userId:userId,
       userEmail: userEmail,
       name: productName,
       description: productDescription,
