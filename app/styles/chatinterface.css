@@ -49,3 +49,30 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
+
+/* Add to chatinterface.css */
+.message {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    max-width: 80%;
+  }
+  
+  .buyer {
+    align-self: flex-end;
+    background-color: #dcf8c6; /* Light green background for buyer messages */
+  }
+  
+  .vendor {
+    align-self: flex-start;
+    background-color: #ffffff; /* White background for vendor messages */
+  }
+  
+  .chat-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 300px; /* Adjust as needed */
+  }
+  
