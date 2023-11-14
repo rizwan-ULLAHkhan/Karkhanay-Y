@@ -42,11 +42,14 @@
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
     "sanity": "^3.17.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "styled-components": "5.2",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.18",

@@ -22,8 +22,9 @@ interface IMessage {
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, buyerId, vendorId }) => {
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const chatBodyRef = useRef<HTMLDivElement>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -31,50 +32,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     }
   }, [messages]); // Triggered when messages update
 
+  // Establish WebSocket connection
   useEffect(() => {
-    const fetchMessages = async () => {
-      const res = await fetch(`/api/conversations/history/${conversationId}`);
-      const data = await res.json();
-      setMessages(data); // Update the state with the fetched messages
+    const newSocket = new WebSocket('ws://localhost:3000');
+    setSocket(newSocket);
+
+    newSocket.onmessage = (event) => {
+      const newMessage = JSON.parse(event.data);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
-    if (conversationId) {
-      fetchMessages();
-    }
-  }, [conversationId]);
+    return () => {
+      newSocket.close();
+    };
+  }, [setSocket]);
+
+  
 
 
 
-  const sendMessage = async () => {
-    try {
-
-      if (message.trim() === '') return; // Don't send empty messages
-      if (!conversationId) {
-        alert("try again")
-        return
+    // Send message through WebSocket
+    const sendMessage = () => {
+      if (message.trim() && socket) {
+        const messageData = {
+          conversationId,
+          sender: buyerId,
+          receiver: vendorId,
+          message,
+        };
+        socket.send(JSON.stringify(messageData));
+        setMessage(''); // Clear the input after sending
       }
-      const response = await fetch('/api/messages/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversationId, // This should be the state from your component or prop
-          sender: buyerId, // This should be the buyer's user ID
-          receiver: vendorId, // This should be the vendor's user ID
-          message, // The message text from the input field
-        }),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        console.log('Message sent:', result);
-        // Here you might want to update the chat UI to show the new message
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  }
+    };
 
   // Determine the height based on the minimized state
   const containerHeight = isMinimized ? '53px' : '400px';
