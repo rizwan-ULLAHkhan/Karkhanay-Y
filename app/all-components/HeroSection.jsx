@@ -3,7 +3,15 @@ import "@/app/styles/herosection.css"
 import { useRouter } from 'next/navigation'
 
 const HeroSection = () => {
+
+
     const router = useRouter()
+
+
+
+
+
+    
     return (
         <div className="hero-container sm:h-screen ">
             

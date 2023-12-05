@@ -4,4 +4,4 @@ const nextConfig = {images: {
     domains: ['cdn.sanity.io','lh3.googleusercontent.com'],
   },}
 
-module.exports = nextConfig
+export default nextConfig

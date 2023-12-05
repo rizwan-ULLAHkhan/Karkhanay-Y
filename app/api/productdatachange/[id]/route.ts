@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest, context: { params: any }) {
 
 
   const productId: string = context.params['id']; // Extract the productId from the URL
-  
+  console.log("memhmud zafar", productId)
   const client = await clientPromise;
   const db = client.db('Karkhanay');
   const collection = db.collection('Ks-collection');

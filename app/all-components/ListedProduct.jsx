@@ -34,22 +34,22 @@ const ListedProduct = () => {
                         : product
                 ));
                 console.log("Updated successfully!");
-                
+
             } else {
                 console.error("Failed to update product.");
-                
+
                 return;
             }
         } catch (error) {
             console.error("Error:", error);
-            
+
             return;
         }
     };
 
 
     const handleDelete = async (product) => {
-        const confirmation = window.confirm('Are you sure you want to delete this product?');
+        const confirmation = window.confirm('Are you sure you want to delete this product?', product._id);
         console.log("ye wala", product._id)
         if (!confirmation) return;
 
@@ -57,7 +57,7 @@ const ListedProduct = () => {
             // First, mark the product as deleted (isDeleted: true) with a PUT request
             const markAsDeletedResponse = await fetch(`/api/productdatachange/${product._id}`, {
                 method: 'PUT',
-                headers: {
+                headers: {  
                     'User-Email': userEmail,
                     'Content-Type': 'application/json',
                 },
@@ -69,11 +69,11 @@ const ListedProduct = () => {
                 setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
                 return;
             }
-            
+
             // // Remove the product from the UI by filtering it out
-             setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
-             console.log("chnage and return")
-            
+            setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
+            console.log("chnage and return")
+
         } catch (error) {
             console.error("Error:", error);
             setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
@@ -82,7 +82,7 @@ const ListedProduct = () => {
 
 
 
-        
+
 
         try {
             const response = await fetch(`/api/productdatachange/${product._id}`, {
@@ -102,6 +102,7 @@ const ListedProduct = () => {
                 // Option 2: filter out the deleted product from state
                 // setProducts(prevProducts => prevProducts.filter(product => product._id !== id));
             } else {
+                
                 console.error("Failed to delete productsss.");
             }
         } catch (error) {
@@ -136,14 +137,46 @@ const ListedProduct = () => {
 
     return (
         <div>
-        <h2 className="text-xl mb-4">Your Products</h2>
-        {products
-            .filter(product => !product.isDeleted)  // This is the filter
-            .map(product => (
-                <Products key={product._id} product={product} handleStockChange={handleStockChange} handleDelete={handleDelete} />
-            ))}
-    </div>
+            <h2 className="text-xl mb-4">Your Products</h2>
+            {products
+                .filter(product => !product.isDeleted)  // This is the filter
+                .map(product => (
+                    <Products key={product._id} product={product} handleStockChange={handleStockChange} handleDelete={handleDelete} />
+                ))}
+        </div>
     );
 }
 
 export default ListedProduct;
+
+
+
+
+
+
+// try {
+//     // First, mark the product as non-deleted (isDeleted: false) with a PUT request
+//     const markAsDeletedResponse = await fetch(`/api/productdatachange/${product._id}`, {
+//         method: 'PUT',
+//         headers: {
+//             'User-Email': userEmail,
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ isDeleted: false }), // Update isDeleted to true
+//     });
+
+//     if (!markAsDeletedResponse.ok) {
+//         console.error("Failed to mark product as deleted.");
+//         setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
+//         return;
+//     }
+
+//     // // add the product nack from to UI by filtering it out
+//     setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
+//     console.log("chnage and return")
+
+// } catch (error) {
+//     console.error("Error:", error);
+//     setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
+//     return;
+// }

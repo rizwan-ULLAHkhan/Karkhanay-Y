@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import React, { useRef } from 'react';
+import { io } from "socket.io-client";
 import '../../styles/chatinterface.css'
 
 // Define an interface for the component props
 interface ChatInterfaceProps {
-  onClose: () => void; // Function to close the chat
+  onClose?: () => void; // Optional prop for closing the chat
   conversationId: string;
   buyerId: string;
   vendorId: string;
+  isMiniChat?: boolean; // Optional prop to indicate mini chat mode
 }
 
 interface IMessage {
@@ -19,12 +21,59 @@ interface IMessage {
   createdAt: Date;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, buyerId, vendorId }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, buyerId, vendorId,isMiniChat }) => {
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const chatBodyRef = useRef<HTMLDivElement>(null);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [socket, setSocket] = useState<any>(null);
+
+
+
+  // Establish WebSocket connection
+  useEffect(() => {
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  // Join conversation room
+  useEffect(() => {
+    if (socket && conversationId) {
+      socket.emit('join conversation', conversationId);
+
+      socket.on('chat message', (newMessage: IMessage) => {
+        setMessages(prevMessages => [...prevMessages, newMessage]);
+      });
+
+      return () => {
+        socket.emit('leave conversation', conversationId);
+      };
+    }
+  }, [socket, conversationId]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`/api/conversations/history/${conversationId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMessages(data);  // Assuming setMessages is your state updater function
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    if (conversationId) {
+      fetchMessages();
+    }
+  }, [conversationId]);
+
 
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -32,38 +81,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     }
   }, [messages]); // Triggered when messages update
 
-  // Establish WebSocket connection
-  useEffect(() => {
-    const newSocket = new WebSocket('ws://localhost:3000');
-    setSocket(newSocket);
 
-    newSocket.onmessage = (event) => {
-      const newMessage = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+
+
+
+
+  // Send message through WebSocket
+  const sendMessage = () => {
+    if (message.trim() === '') return; // Don't send empty messages
+    const data = {
+      conversationId,
+      sender: buyerId,
+      receiver: vendorId,
+      message,
     };
-
-    return () => {
-      newSocket.close();
-    };
-  }, [setSocket]);
-
-  
-
-
-
-    // Send message through WebSocket
-    const sendMessage = () => {
-      if (message.trim() && socket) {
-        const messageData = {
-          conversationId,
-          sender: buyerId,
-          receiver: vendorId,
-          message,
-        };
-        socket.send(JSON.stringify(messageData));
-        setMessage(''); // Clear the input after sending
-      }
-    };
+    console.log("im here")
+    socket.emit('chat message', data);
+    setMessage(''); // Clear the input after sending
+  };
 
   // Determine the height based on the minimized state
   const containerHeight = isMinimized ? '53px' : '400px';
@@ -71,10 +107,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     <div className="chat-interface-container " style={{ height: containerHeight }}>
       {/* Chat Header */}
       <div className="chat-header">
-        <button onClick={() => setIsMinimized(!isMinimized)}>
-          {isMinimized ? 'Maximize' : 'Minimize'}
-        </button>
-        <button onClick={onClose}>Close</button>
+        {isMinimized && <button onClick={() => setIsMinimized(!isMinimized)}>Maximize</button>}
+        {onClose && <button onClick={onClose}>Close</button>}
       </div>
 
       {/* Conditionally render Chat Body and Footer based on isMinimized state */}

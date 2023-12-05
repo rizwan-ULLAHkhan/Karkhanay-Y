@@ -16,6 +16,8 @@ type Product = {
   urls: string[];
   userId:string;
   userEmail: string;
+  userName: string;
+  userImage: string;
   _id: string;
 };
 export const fetchData = createAsyncThunk(

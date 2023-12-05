@@ -19,12 +19,16 @@ export default function NewProduct() {
   const [productCategory, setProductCategory] = useState('');
   const [userEmail, setUserEmail] = useState("");
   const [userId,setUserId]=useState(null)
+  const [userName,setUserName]=useState(null)
+  const [userImage,setUserImage]=useState(null)
 
   const { data: session } = useSession();
   useEffect(() => {
     if (session) { // Check if session exists
       setUserEmail(session?.user?.email);
       setUserId(session?.user.id)
+      setUserName(session?.user.name)
+      setUserImage(session?.user.image)
       console.log(session?.user.id)
     
     
@@ -184,6 +188,8 @@ export default function NewProduct() {
 
     const productData = {
       userId:userId,
+      userName:userName,
+      userImage:userImage,
       userEmail: userEmail,
       name: productName,
       description: productDescription,

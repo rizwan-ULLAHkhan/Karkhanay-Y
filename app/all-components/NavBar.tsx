@@ -80,10 +80,10 @@ const NavBar = () => {
         )}
 
         <Link
-          href="/path-to-cart"
+          href="/pages/ChatApp"
           className=" text-Kgray hover:text-gray-400 cursor-pointer"
         >
-          Cart
+          Chat
         </Link>
       </div>
     </nav>

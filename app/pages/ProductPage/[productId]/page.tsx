@@ -40,7 +40,7 @@ function ProductPage({ params }: { params: { productId: string } }) {
 
     useEffect(() => {
         if (session) { // Check if session exists
-            setBuyerId(session?.user.id,)
+            setBuyerId(session?.user.id)
         }
     }, []);
 
@@ -84,17 +84,21 @@ function ProductPage({ params }: { params: { productId: string } }) {
             alert("please sign in first")
             return
         }
-
+        setBuyerId(session.user.id);
+        console.log("buyers id,",buyerId)
         setShowChat(true); // Display chat interface
-
+        
         // Add the logic to make API call
         try {
             const response = await fetch('/api/conversations/initiate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    buyerId: session.user.id, // Replace with actual buyerId
-                    vendorId: productData.userId // Replace with actual vendorId
+                    buyerId: session.user.id,
+                    vendorId: productData.userId, 
+                    vendorName:productData.userName,
+                    vendorImage:productData.userImage,
+
                 }),
             });
 
@@ -141,6 +145,7 @@ function ProductPage({ params }: { params: { productId: string } }) {
                     buyerId={buyerId}
                     vendorId={productData.userId}
                     conversationId={conversationId}
+                    isMiniChat={true}
 
                     
                 />
