@@ -7,9 +7,9 @@ import '../../styles/chatinterface.css'
 interface ChatInterfaceProps {
   onClose?: () => void; // Optional prop for closing the chat
   conversationId: string;
-  buyerId: string;
-  vendorId: string;
+  receiverName: string;
   isMiniChat?: boolean; // Optional prop to indicate mini chat mode
+  userId:string
 }
 
 interface IMessage {
@@ -17,11 +17,11 @@ interface IMessage {
   conversationId: string;
   sender: string;
   receiver: string;
-  message: string;
+  messageText: string;
   createdAt: Date;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, buyerId, vendorId,isMiniChat }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, receiverName, isMiniChat,userId }) => {
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -64,6 +64,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
         }
         const data = await response.json();
         setMessages(data);  // Assuming setMessages is your state updater function
+        
+        console.log("check message data please,", data)
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
@@ -92,8 +94,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     if (message.trim() === '') return; // Don't send empty messages
     const data = {
       conversationId,
-      sender: buyerId,
-      receiver: vendorId,
+      sender: userId,
+      receiver: receiverName,
       message,
     };
     console.log("im here")
@@ -101,45 +103,53 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     setMessage(''); // Clear the input after sending
   };
 
-  // Determine the height based on the minimized state
-  const containerHeight = isMinimized ? '53px' : '400px';
+  // Determine the styles based on the mini chat state
+  const chatContainerClass = isMiniChat ? "chat-interface-container-mini" : "chat-interface-container-full";
+  const chatBodyClass = isMiniChat ? "chat-body-mini" : "chat-body-full";
+  const chatFooterClass = isMiniChat ? "chat-footer-mini" : "chat-footer-full";
   return (
-    <div className="chat-interface-container " style={{ height: containerHeight }}>
+    <div className={`chat-interface-container ${chatContainerClass}`}>
       {/* Chat Header */}
       <div className="chat-header">
-        {isMinimized && <button onClick={() => setIsMinimized(!isMinimized)}>Maximize</button>}
+        {isMiniChat && (
+          <button onClick={() => setIsMinimized(!isMinimized)}>
+            {isMinimized ? 'Maximize' : 'Minimize'}
+          </button>
+        )}
         {onClose && <button onClick={onClose}>Close</button>}
       </div>
 
       {/* Conditionally render Chat Body and Footer based on isMinimized state */}
       {!isMinimized && (
         <>
-
+          {/* Messages */}
+          <div className={`chat-body ${chatBodyClass}`} ref={chatBodyRef}>
+            {messages.map((msg: IMessage) => (
+              <div key={msg._id} className={`message ${msg.sender === userId ? "buyer" : "vendor"} ${isMiniChat ? "mini" : "full"}`}>
+                <div className="message-header">
+                  <strong>{msg.sender === userId ? "You" : receiverName}</strong>
+                </div>
+                <p className="message-content">{msg.messageText}</p>
+                <div className="message-timestamp">
+                  {/* Format the date to a human-readable format */}
+                  {new Date(msg.createdAt).toLocaleTimeString([], { timeStyle: 'short' })}
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Chat Footer: Input field and send button */}
-          <div className="chat-footer">
+          <div className={`chat-footer ${chatFooterClass}`}>
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type a message"
+              className={isMiniChat ? "input-mini" : "input-full"}
             />
-            <button onClick={sendMessage}>Send</button>
-          </div>
-
-          <div className="chat-body" ref={chatBodyRef}>
-            {messages.map((msg: IMessage) => (
-              <div key={msg._id} className={`message ${msg.sender === buyerId ? "buyer" : "vendor"}`}>
-                <div className="message-header">
-                  <strong>{msg.sender === buyerId ? "You" : "Vendor"}</strong>
-                </div>
-                <p className="message-content">{msg.message}</p>
-                <div className="message-timestamp">
-                  {/* Format the date to a human-readable format */}
-                  {new Date(msg.createdAt).toLocaleTimeString()}
-                </div>
-              </div>
-            ))}
+            <button onClick={sendMessage} className={isMiniChat ? "send-button-mini" : "send-button-full"}>
+              Send
+            </button>
           </div>
         </>
       )}

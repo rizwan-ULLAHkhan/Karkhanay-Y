@@ -6,7 +6,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 const messageSchema = new Schema({
   conversationId: { type: Schema.Types.ObjectId, required: true, ref: 'Conversation' },
   sender: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  receiver: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  receiver: { type: String, required: true },
   messageText: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });

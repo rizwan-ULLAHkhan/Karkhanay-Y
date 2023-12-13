@@ -33,14 +33,15 @@ const product = {
 function ProductPage({ params }: { params: { productId: string } }) {
     const [conversationId, setConversationId] = useState("");
     const [showChat, setShowChat] = useState(false);
-    const [buyerId, setBuyerId] = useState("")
+    const [senderId, setSenderId] = useState("")
+    const [receiverName, setReceiverName] = useState("")
 
 
     const { data: session } = useSession();
 
     useEffect(() => {
         if (session) { // Check if session exists
-            setBuyerId(session?.user.id)
+            setSenderId(session?.user.id)
         }
     }, []);
 
@@ -80,12 +81,16 @@ function ProductPage({ params }: { params: { productId: string } }) {
 
     const handleChatWithSeller = async () => {
 
-        if (!session) {
+        if (!session || !session.user || !session.user.name) {
             alert("please sign in first")
             return
         }
-        setBuyerId(session.user.id);
-        console.log("buyers id,",buyerId)
+        setSenderId(session.user.id);
+        setReceiverName(senderId === session.user.id ? session.user.name : (productData.userName));
+
+        console.log(session.user.name,"name")
+        console.log(session.user.image,"image")
+        console.log("buyers id,",senderId)
         setShowChat(true); // Display chat interface
         
         // Add the logic to make API call
@@ -95,12 +100,14 @@ function ProductPage({ params }: { params: { productId: string } }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     buyerId: session.user.id,
+                    buyerName:session.user.name,
+                    buyerImage:session.user.image,
                     vendorId: productData.userId, 
                     vendorName:productData.userName,
                     vendorImage:productData.userImage,
 
                 }),
-            });
+            });console.log
 
             const data = await response.json();
             
@@ -142,10 +149,10 @@ function ProductPage({ params }: { params: { productId: string } }) {
             {showChat && (
                 <ChatInterface
                     onClose={() => setShowChat(false)}
-                    buyerId={buyerId}
-                    vendorId={productData.userId}
+                    receiverName={productData.userId}
                     conversationId={conversationId}
                     isMiniChat={true}
+                    userId={senderId}
 
                     
                 />

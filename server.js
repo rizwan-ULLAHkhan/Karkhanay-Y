@@ -61,9 +61,9 @@ io.on('connection', (socket) => {
       console.log("beecee")
       // Save the message to the database
       const newMessage = await Message.create({
-        conversationId: new mongoose.Types.ObjectId(data.conversationId),
-        sender: new mongoose.Types.ObjectId(data.sender),
-        receiver: new mongoose.Types.ObjectId(data.receiver),
+        conversationId: data.conversationId, // assuming data.conversationId is a valid ObjectId string
+        sender: data.sender, // assuming data.sender is a valid ObjectId string
+        receiver: data.receiver, // assuming data.receiver is a valid ObjectId string
         messageText: data.message,
       });
       

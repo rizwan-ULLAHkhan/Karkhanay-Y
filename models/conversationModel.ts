@@ -8,6 +8,8 @@ interface IConversation extends Document {
 
 const conversationSchema = new Schema({
     participant1: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    participant1Name: { type: String, required: true }, // Add this line
+    participant1Image: { type: String, required: true }, // Add this line
     participant2: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     participant2Name: { type: String, required: true },
     participant2Image: { type: String, required: true },

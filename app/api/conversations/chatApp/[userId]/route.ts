@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, context: { params: any }) {
         { participant1: new ObjectId(userId) },
         { participant2: new ObjectId(userId) }
       ]
-    }).sort({ createdAt: -1 }).select('participant1  participant2 participant2Name participant2Image createdAt'); // Selecting specific fields; // Sorting by most recent
+    }).sort({ createdAt: -1 })
 
     return NextResponse.json(conversations);
 
