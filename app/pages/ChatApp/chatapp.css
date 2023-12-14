@@ -1,10 +1,10 @@
 .chat-app {
     display: flex;
-    height: 100vh; /* Use the full height of the viewport */
+    height: 80vh; /* Use the full height of the viewport */
   }
   
   .sidebar {
-    width: 250px; /* or whatever width you prefer */
+    width: 150px; /* or whatever width you prefer */
     overflow-y: auto;
     border-right: 1px solid #ccc; /* Add a border between sidebar and chat */
   }

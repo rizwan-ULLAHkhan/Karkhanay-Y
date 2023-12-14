@@ -55,7 +55,7 @@ const ChatApp = () => {
 
   return (
     <div className="chat-app">
-      <div className="sidebar">
+      <div className="sidebar pl-6">
         {isLoading ? (
           <div>Loading conversations...</div>
         ) : (

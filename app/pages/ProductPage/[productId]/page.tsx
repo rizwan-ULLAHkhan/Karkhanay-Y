@@ -149,7 +149,7 @@ function ProductPage({ params }: { params: { productId: string } }) {
             {showChat && (
                 <ChatInterface
                     onClose={() => setShowChat(false)}
-                    receiverName={productData.userId}
+                    receiverName={productData.name}
                     conversationId={conversationId}
                     isMiniChat={true}
                     userId={senderId}

@@ -32,7 +32,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
 
   // Establish WebSocket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const newSocket = io('http://localhost:3001',{
+      reconnectionDelayMax: 10000,
+    reconnectionAttempts: Infinity
+    });
     setSocket(newSocket);
 
     return () => {
@@ -108,7 +111,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
   const chatBodyClass = isMiniChat ? "chat-body-mini" : "chat-body-full";
   const chatFooterClass = isMiniChat ? "chat-footer-mini" : "chat-footer-full";
   return (
-    <div className={`chat-interface-container ${chatContainerClass}`}>
+    <div className={`chat-interface-container ${chatContainerClass} px-4`}>
       {/* Chat Header */}
       <div className="chat-header">
         {isMiniChat && (

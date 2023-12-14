@@ -1,23 +1,25 @@
 /* Container styles */
 .chat-interface-container {
+  position: relative; 
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
   border-radius: 4px;
   overflow: hidden;
+  width:100%;
 }
 
 .chat-interface-container-mini {
-  width: 300px;
+  width: 350px;
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;
+  background-color:white;
 }
 
 .chat-interface-container-full {
   width: 100%;
-  max-width: 500px;
   height: 600px;
 }
 
@@ -35,24 +37,33 @@
 .chat-body {
   display: flex;
   flex-direction: column;
-  /* rest of your styles */
+  height:530px;
+  overflow-y: auto;
+  
 }
 
 .chat-body-mini {
-  max-height: 200px;
+  max-height: 300px;
+  padding-bottom: 50px; 
 }
 
 .chat-body-full {
-  max-height: 500px;
+  max-height: 100%;
 }
 
 /* Footer styles */
 .chat-footer {
+  position: absolute;
+  bottom: 0; /* Align to the bottom */
+  left: 0; /* Align to the left */
+  right: 0; /* Align to the right */
   padding: 10px;
   background-color: #f8f9fa;
   display: flex;
   gap: 10px;
+  z-index: 100; /* Ensure it's above other elements */
 }
+
 
 /* Mini-specific footer styles */
 .chat-footer-mini {
