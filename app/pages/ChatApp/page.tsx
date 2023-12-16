@@ -19,6 +19,7 @@ const ChatApp = () => {
   const [conversations, setConversations] = useState<ConversationData[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [receiverName, setReceiverName] = useState<string>('');
+  const [receiverImage, setReceiverImage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const { data: session } = useSession(); // Using NextAuth for session handling
   const userId = session?.user?.id;
@@ -45,62 +46,56 @@ const ChatApp = () => {
     fetchConversations();
   }, [userId]);
 
-  const handleConversationClick = (conversationId: string, participant1: string, participant2Name: string,participant1Name: string) => {
-    console.log(conversationId)
-    setCurrentConversationId(conversationId);
-    setReceiverName(userId === participant1 ? participant2Name : participant1Name);
-    
+  const handleConversationClick = (conversation:ConversationData) => {
+    console.log(conversation._id)
+    setCurrentConversationId(conversation._id);
+    setReceiverName(userId === conversation.participant1 ? conversation.participant2Name : conversation.participant1Name);
+    setReceiverImage(userId === conversation.participant1 ? conversation.participant2Image : conversation.participant1Image);
+
     // Additional logic for handling WebSocket subscription
   };
 
   return (
     <div className="chat-app">
-      <div className="sidebar pl-6">
+      <div className="sidebar">
+        <div className=' text-black font-bold pb-2 pl-1 border-b-4'>Conversations</div>
         {isLoading ? (
-          <div>Loading conversations...</div>
+          <div className=" text-black">Loading conversations...</div>
         ) : (
-          conversations.map((conversation) => {
-            // Log the values for debugging
-            console.log(`userId: ${userId}, participant1: ${conversation.participant1}`);
-            console.log(`participant2Image: ${conversation.participant2Image}`);
-            console.log(conversation);
-            
-
-            return (
-              <div key={conversation._id}
-                onClick={() => handleConversationClick(conversation._id, conversation.participant1, conversation.participant2Name,conversation.participant1Name)}>
-                {conversation.participant2Image && userId === conversation.participant1 ? (
-                  <>
-                    {console.log("Rendered participant 2")}
-                    {conversation.participant2Name}
-                    <img src={conversation.participant2Image} alt={`${conversation.participant2Name}'s Avatar`} />
-                  </>
-                ) : (
-                  <>
-                    {console.log("Rendered participant 1")}
-                    {conversation.participant1Name}
-                    <img src={conversation.participant1Image} alt={`${conversation.participant1Name}'s Avatar`} />
-                  </>
-                )}
+          conversations.map((conversation) => (
+            <div
+              key={conversation._id}
+              className="conversation"
+              onClick={() => handleConversationClick(conversation)}
+            >
+              <img src={userId === conversation.participant1 ? conversation.participant2Image : conversation.participant1Image || '/default-avatar.png'} alt={`${conversation.participant2Name || conversation.participant1Name}'s Avatar`} className="conversation-avatar" />
+              <div className="conversation-details">
+                <div className="participant-name">
+                  {userId === conversation.participant1 ? conversation.participant2Name : conversation.participant1Name}
+                </div>
+                <div className="message-preview">Last message preview...</div> {/* Replace with actual message preview */}
               </div>
-            );
-          })
+              <div className="timestamp">3d</div> {/* Replace with actual timestamp */}
+            </div>
+          ))
         )}
       </div>
 
       <div className="chat-area">
-        {currentConversationId && userId ? (
+        {currentConversationId && userId && !isLoading? (
           <ChatInterface
             conversationId={currentConversationId}
             receiverName={receiverName}
+            receiverImage={receiverImage}
             userId={userId}
           />
         ) : (
-          <div>Please select a conversation</div>
+          <div className="select-conversation">Please select a conversation</div>
         )}
       </div>
     </div>
   );
+
 };
 
 export default ChatApp;

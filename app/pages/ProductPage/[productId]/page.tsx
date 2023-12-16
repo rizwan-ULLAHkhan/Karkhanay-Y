@@ -35,6 +35,7 @@ function ProductPage({ params }: { params: { productId: string } }) {
     const [showChat, setShowChat] = useState(false);
     const [senderId, setSenderId] = useState("")
     const [receiverName, setReceiverName] = useState("")
+    const [receiverImage, setReceiverImage] = useState("")
 
 
     const { data: session } = useSession();
@@ -81,15 +82,21 @@ function ProductPage({ params }: { params: { productId: string } }) {
 
     const handleChatWithSeller = async () => {
 
-        if (!session || !session.user || !session.user.name) {
+        if (!session || !session.user || !session.user.name || !session.user.image ) {
             alert("please sign in first")
             return
         }
         setSenderId(session.user.id);
         setReceiverName(senderId === session.user.id ? session.user.name : (productData.userName));
+        setReceiverImage(senderId === session.user.id ? session.user.image : (productData.userImage));
+        
 
         console.log(session.user.name,"name")
         console.log(session.user.image,"image")
+
+        console.log(receiverName, "receiverName")
+        console.log(receiverImage, "receiverImage")
+        
         console.log("buyers id,",senderId)
         setShowChat(true); // Display chat interface
         
@@ -149,7 +156,8 @@ function ProductPage({ params }: { params: { productId: string } }) {
             {showChat && (
                 <ChatInterface
                     onClose={() => setShowChat(false)}
-                    receiverName={productData.name}
+                    receiverName={receiverName}
+                    receiverImage={receiverImage}
                     conversationId={conversationId}
                     isMiniChat={true}
                     userId={senderId}

@@ -23,10 +23,10 @@ module.exports = {
             colors: {
         cyan: '#A1FFF7',
         heather: '#B8AEDA',
-        Kgreen:'#8cc43c',
-        Kgray:'#808080',
+        Kgreen:'#8cc43c',        
         Korange: '#D2691E',
-        Kblue: '#003366'
+        Kgray:'#808080',
+        Kblue: 'black'
       },
     },
   },

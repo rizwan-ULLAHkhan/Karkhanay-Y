@@ -13,13 +13,14 @@
 
 .hero-container {
     position: relative;
-    background-image: url('/path-to-your-industrial-hd-image.jpg');
+    background-image: url('');
     background-size: cover;
     background-position: center;
     height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
+    
 }
 
 .overlay {
@@ -38,6 +39,7 @@
     text-align: center;
     max-width: 800px; /* adjust as necessary */
     margin: 0 auto;
+    opacity: calc(2);
 }
 
 .offer-tag {

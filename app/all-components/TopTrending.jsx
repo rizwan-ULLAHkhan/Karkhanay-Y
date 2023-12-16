@@ -41,7 +41,7 @@ const CombinedFeature = () => {
   return (
     <section className="w-full md:px-4 lg:px-6 pt-8 lg:pt-12 bg-gray-50 p-4">
       <div className="flex justify-center items-center pb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-Kgray">
+        <h1 className="text-2xl md:text-3xl font-bold text-black">
           {loading ? 'Loading...' : `Top Trending Products in ${selectedCategory}`}
         </h1>
       </div>

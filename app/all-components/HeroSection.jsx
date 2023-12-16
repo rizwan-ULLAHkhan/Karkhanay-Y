@@ -14,8 +14,10 @@ const HeroSection = () => {
     
     return (
         <div className="hero-container sm:h-screen ">
+        
+
             
-            <div className="hero-content ">
+            <div className="hero-content">
                 <span className="karkhanay-title animate-charcter justify-center mx-2 ">KARKHANAY</span>
                 <h1 className='  font-semibold italic text-lg'>Revolutionizing Industrial Shopping</h1>
                 
