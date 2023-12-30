@@ -9,8 +9,11 @@ import { AppDispatch } from '@/app/redux/store'
 import { useDispatch } from 'react-redux';
 import { startSearch, searchSuccess, searchFailure } from '../redux/features/productsearchpage/productsearchpageSlice'
 
+interface NavBarProps {
+  showSearchBar: boolean;
+}
 
-const NavBar = () => {
+const NavBar = ({ showSearchBar }: NavBarProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { data: session } = useSession();
 
@@ -52,7 +55,7 @@ const NavBar = () => {
         <div className=" text-Kgray font-bold text-lg ">Karkhanay</div>
       </Link>
 
-      <SearchBar onSearch={executeSearch} />
+      {!showSearchBar &&<SearchBar onSearch={executeSearch}  location='navbar'/>}
 
       <div className="font-mono gap-2 flex items-center ml-4 lg:mb-0 mb-2">
         {session && (

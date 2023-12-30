@@ -6,20 +6,14 @@
 }
 
 .sidebar {
-  width: 250px;
-  /* Adjust as needed */
+  width: 25%; /* Adjust as needed */
   background-color: whitesmoke;
-  /* Dark background for the sidebar */
   color: white;
   overflow-y: auto;
-  /* Scrollable sidebar */
   padding: 10px 0;
-  /* Top and bottom padding */
-  
-  
 }
 
-.conversation {
+.conversation { 
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -78,6 +72,7 @@
   background: whitesmoke;
   border-left-color:black;
   border-left-width: 2px;
+  width: 75%; /* Adjust as needed */
   
 
 
@@ -88,4 +83,22 @@
   padding: 20px;
   color: black;
   /* Additional styling for the 'Please select a conversation' prompt */
+}
+
+
+/* Styles for screens 400px wide or narrower */
+@media screen and (max-width: 800px) {
+  .sidebar {
+    width: 100%;
+  }
+
+  .chat-area {
+    display: none; /* Hide chat area by default on small screens */
+  }
+
+  /* Show chat area when a conversation is selected */
+  .chat-area.active {
+    display: block;
+    width: 100%;
+  }
 }

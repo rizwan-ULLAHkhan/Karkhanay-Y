@@ -75,6 +75,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         trendingProductIDs: is_trending ? [insertedProductId] : [] // Only add if is_trending is true
     };
     await categoryCollection.insertOne(newCategoryData); 
+    
   } catch (error) {
       console.error("MongoDB Error when inserting category:", (error as Error).message, (error as Error).stack);
       // Rollback: Delete the previously inserted product

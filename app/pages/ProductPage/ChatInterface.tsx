@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import React, { useRef } from 'react';
 import { io } from "socket.io-client";
@@ -9,9 +10,9 @@ interface ChatInterfaceProps {
   onClose?: () => void; // Optional prop for closing the chat
   conversationId: string;
   receiverName: string;
-  receiverImage:string;
+  receiverImage: string;
   isMiniChat?: boolean; // Optional prop to indicate mini chat mode
-  userId:string
+  userId: string
 }
 
 interface IMessage {
@@ -23,7 +24,7 @@ interface IMessage {
   createdAt: Date;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, receiverName, isMiniChat,userId,receiverImage }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, receiverName, isMiniChat, userId, receiverImage }) => {
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -32,12 +33,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
   const [isLoading, setIsLoading] = useState(true);
 
 
- console.log(receiverImage, "name nam nmna")
+  console.log(receiverImage, "name nam nmna")
   // Establish WebSocket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:3001',{
+    const newSocket = io('http://localhost:3001', {
       reconnectionDelayMax: 10000,
-    reconnectionAttempts: Infinity
+      reconnectionAttempts: Infinity
     });
     setSocket(newSocket);
 
@@ -72,7 +73,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
         const data = await response.json();
         setMessages(data);  // Assuming setMessages is your state updater function
         setIsLoading(false);
-        
+
         console.log("check message data please,", data)
       } catch (error) {
         console.error('Error fetching messages:', error);
@@ -111,7 +112,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     setMessage(''); // Clear the input after sending
   }
 
-  const handleKeyDown = (event:any) => {
+  const handleKeyDown = (event: any) => {
     if (event.key === 'Enter') {
       sendMessage();
     }
@@ -125,60 +126,62 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose, conversationId, 
     <div className={`chat-interface-container ${chatContainerClass} `}>
       {/* Chat Header */}
       <div className="chat-header border-b-2">
-      <div className='flex items-center gap-1'>
-      <Image className=' rounded-full ' src={receiverImage} alt="Logo" width={42} height={42} />
-      <div className=' text-black'> {receiverName}</div>
-      </div>
-      <div className='flex gap-1'>
-        {isMiniChat && (
-          <button onClick={() => setIsMinimized(!isMinimized)}>
-            {isMinimized ? 'Maximize' : 'Minimize'}
-          </button>
-        )}
-        {onClose && <button onClick={onClose}>Close</button>}
+        <div className='flex items-center gap-1'>
+          <Image className=' rounded-full ' src={receiverImage} alt="Logo" width={42} height={42} />
+          <div className=' text-black'> {receiverName}</div>
+        </div>
+        <div className='flex gap-1'>
+          {isMiniChat && (
+            <button onClick={() => setIsMinimized(!isMinimized)}>
+              {isMinimized ? 'Maximize' : 'Minimize'}
+            </button>
+          )}
+          {onClose && <button onClick={onClose}>Close</button>}
         </div>
       </div>
 
-      {/* Conditionally render Chat Body and Footer based on isMinimized state */}
-      {!isMinimized && !isLoading?(
-        <>
-          {/* Messages */}
-          <div className={`chat-body ${chatBodyClass} px-2`} ref={chatBodyRef}>
-            {messages.map((msg: IMessage) => (
-              <div key={msg._id} className={`message ${msg.sender === userId ? "buyer" : "vendor"} ${isMiniChat ? "mini" : "full"}`}>
-                <div className="message-header">
-                  <strong>{msg.sender === userId ? "You" : receiverName}</strong>
-                </div>
-                <p className="message-content px-2">{msg.messageText}</p>
-                <div className="message-timestamp">
-                  {/* Format the date to a human-readable format */}
-                  {new Date(msg.createdAt).toLocaleTimeString([], { timeStyle: 'short' })}
-                </div>
+      {
+        isLoading ? (
+          // Display loading message only when isLoading is true
+          <div className='text-black pl-2 text-lg font-bold'>Loading...</div>
+        ) : (
+          // Render Chat Body and Footer if not loading and not minimized
+          !isMinimized && (
+            <>
+              {/* Messages */}
+              <div className={`chat-body ${chatBodyClass} px-2`} ref={chatBodyRef}>
+                {messages.map((msg: IMessage) => (
+                  <div key={msg._id} className={`message ${msg.sender === userId ? "buyer" : "vendor"} ${isMiniChat ? "mini" : "full"}`}>
+                    <div className="message-header">
+                      <strong>{msg.sender === userId ? "You" : receiverName}</strong>
+                    </div>
+                    <p className="message-content px-2">{msg.messageText}</p>
+                    <div className="message-timestamp">
+                      {new Date(msg.createdAt).toLocaleTimeString([], { timeStyle: 'short' })}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Chat Footer: Input field and send button */}
-          <div className={`chat-footer ${chatFooterClass}`}>
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type a message"
-              onKeyDown={handleKeyDown}
-              className={isMiniChat ? "input-mini" : "input-full"}
-            />
-            <button onClick={sendMessage}
-            
-            placeholder="Type a message"
-            className={isMiniChat ? "send-button-mini" : "send-button-full"}>
-              Send
-            </button>
-          </div>
-        </>
-      ):(
-        <div className=' text-black'>Loading..</div>
-      )}
+              {/* Chat Footer: Input field and send button */}
+              <div className={`chat-footer ${chatFooterClass}`}>
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a message"
+                  className={isMiniChat ? "input-mini" : "input-full"}
+                />
+                <button onClick={sendMessage} className={isMiniChat ? "send-button-mini" : "send-button-full"}>
+                  Send
+                </button>
+              </div>
+            </>
+          )
+        )
+      }
+
     </div>
   );
 };

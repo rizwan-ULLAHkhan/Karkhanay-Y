@@ -1,3 +1,4 @@
+'use client'
 import clientPromise from '../../../../lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 import {Message} from '../../../../models/messageModel'; // The path should be to where your Message model is saved
@@ -13,6 +14,7 @@ interface ChatMessageRequest {
 
 export async function POST(req: NextRequest, res: NextResponse) {
     console.log("POST function accessed for Chat Message");
+
     const data = await req.json();
     console.log(data, "destructuring data")
 

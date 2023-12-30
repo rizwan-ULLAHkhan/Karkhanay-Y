@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from 'react-redux';
 import { setSelectedProduct } from '../redux/features/productpage/productpageSlice';
+import '@/app/styles/toptrending.css'
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Pagination, Navigation, Mousewheel } from 'swiper';
 
 
 const CombinedFeature = () => {
@@ -34,28 +40,25 @@ const CombinedFeature = () => {
     fetchCategoriesWithTrending();
   }, []);
 
-  const featuredProducts = selectedCategory 
-    ? categoriesWithTrending.find(cat => cat.categoryName === selectedCategory)?.trendingProducts 
+  const featuredProducts = selectedCategory
+    ? categoriesWithTrending.find(cat => cat.categoryName === selectedCategory)?.trendingProducts
     : [];
 
   return (
-    <section className="w-full md:px-4 lg:px-6 pt-8 lg:pt-12 bg-gray-50 p-4">
-      <div className="flex justify-center items-center pb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-black">
+    <section className="featuredSection">
+      <div className="titleContainer">
+        <h1 className="title">
           {loading ? 'Loading...' : `Top Trending Products in ${selectedCategory}`}
         </h1>
       </div>
 
-      {error && <p className="text-red-500 mt-2 mb-4">{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-      <div className="flex flex-wrap gap-2 mb-4 justify-center">
+      <div className="categoryContainer">
         {categoriesWithTrending.map((category) => (
           <button
             key={category.categoryName}
-            className={`p-2 rounded shadow ${category.categoryName === selectedCategory
-                ? "bg-lime-500 text-white"
-                : "bg-lime-200 text-gray-800"
-              }`}
+            className={`categoryButton ${category.categoryName === selectedCategory ? "active" : ""}`}
             onClick={() => setSelectedCategory(category.categoryName)}
           >
             {category.categoryName}
@@ -63,41 +66,63 @@ const CombinedFeature = () => {
         ))}
       </div>
 
-      <div className="p-4 bg-Kgray border rounded shadow">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 lg:mx-20 ">
-          {featuredProducts.map((product) => (
-            
-            <Link href={`/pages/ProductPage/${product._id}`} key={product._id} className=" p-8 border-2 border-Kgreen rounded-2xl shadow-md hover:bg-lime-50 transition bg-white mt-3" onClick={() => dispatch(setSelectedProduct(product))}>
-               
-                <div className="flex items-center gap-4 mb-2 flex-col ">
-                  <div className="w-36 h-56 relative min-w-full">
-                    <Image
-                      src={product.urls[0]}
-                      alt={product.description}
-                      layout="fill"
-                      objectFit="contain"
-                      className="rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold group-hover:text-lime-500">{product.name}</h2>
-                    {/* <p className="text-sm text-gray-600 mt-1">In this version, I've wrapped the grid of product cards inside a parent div with a white background and a border to make it feel like a single cohesive card. This adds a layer of hierarchy to the design, which can make the content feel more organized and contained.</p> */}
-                  </div>
+      <Swiper
+        slidesPerView={3}
+        spaceBetween={30}
+        pagination={{
+          clickable: true,
+        }}
+        navigation={true} // Enable navigation
+        mousewheel={true} // Enable mousewheel control
+        modules={[Pagination, Navigation, Mousewheel]} // Include Mousewheel in modules
+        className="mySwiper"
+        breakpoints={{
+          // when window width is >= 1080px
+          1080: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+          },
+          // when window width is >= 850px
+          650: {
+            slidesPerView: 2,
+            spaceBetween: 10,
+          },
+          160: {
+            slidesPerView: 1,
+            spaceBetween: 10,
+          }
+        }}
+      >
+        {featuredProducts.map((product) => (
+          <SwiperSlide key={product._id}>
+            <div className="productCard">
+              <Link href={`/pages/ProductPage/${product._id}`}
+                onClick={() => dispatch(setSelectedProduct(product))}>
+                <div className="productImageContainer">
+                  <Image
+                    src={product.urls[0]}
+                    alt={product.description}
+                    layout="fill"
+                    objectFit="cover"
+                    className="productImage"
+                  />
                 </div>
-                <div className="flex flex-col justify-between items-center mt-4">
-                  <span className="text-md font-bold">Starting from {product.price} Rs</span>
-                  <span className="text-xs mt-4 bg-Kgreen px-2 py-1 rounded-full">Featured</span>
+                <div className="productInfo">
+                  <h2 className="productName">{product.name}</h2>
+                  <p className="productPrice">Starting from {product.price} Rs</p>
                 </div>
-              
-            </Link>
-          ))}
-        </div>
-        <div className="text-right mt-4">
-          <button className="text-Kgreen border p-2 font-semibold hover:underline">View All Trending Products</button>
-        </div>
+
+              </Link>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      <div className="viewAllContainer">
+        <button className="viewAllButton">View All Trending Products</button>
       </div>
     </section>
   );
-};
 
+}
 export default CombinedFeature;

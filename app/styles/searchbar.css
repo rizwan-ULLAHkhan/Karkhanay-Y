@@ -1,0 +1,90 @@
+/* styles.css */
+
+.hero-specific-styles {
+    /* Styles specific to the hero section */
+    
+    background-color: rgb(248, 250, 248);
+    color: black;
+    box-shadow: inset;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    height: 80px; /* You may want to adjust this for smaller screens */
+    width: 100%; /* Take up 100% of the parent container's width */
+    max-width: 800px; /* Do not exceed 800px */
+    /* No min-width here to allow for responsiveness */
+  }
+  
+  /* Adjust the size for smaller screens */
+  @media (max-width: 500px) {
+    .hero-specific-styles {
+      height: 60px; /* Smaller height for small screens */
+      padding: 0.25rem; /* Less padding for small screens */
+      font-size: 0.7rem; /* Smaller font size for small screens */
+      max-width: 100%; /* Allow the search bar to fill the container */
+      
+    }
+  }
+
+.navbar-specific-styles {
+    /* Styles specific to the navbar */
+    background-color: transparent;
+    /* Example */
+    color: white;
+    /* Add other styling as needed */
+}
+
+.search-input-hero {
+    flex-grow: 1; /* Allows the input to grow and fill available space */
+    background-color: #000000; /* bg-black */
+    border: 2px solid transparent; /* border-2 border-transparent */
+    border-radius: 1rem 0 0 1rem; /* rounded-l-xl, round only the left side */
+    outline: none; /* outline-none */
+    color: #FFFFFF; /* text-white */
+    padding-left: 0.5rem; /* pl-2 */
+    padding-top: 0.25rem; /* py-1 */
+    padding-bottom: 0.25rem; /* py-1 */
+    transition: all 0.3s ease; /* transition duration-300 */
+    height: 3rem; /* h-12 */
+    min-width: 0; /* Prevents the input from not shrinking below a certain point */
+  }
+  
+  .search-input-hero:hover {
+    border-color: #8cc43c; /* Assuming #8cc43c is the Kgreen color */
+  }
+  
+  .search-button-hero {
+    background-color: #f97316; /* bg-orange-400 */
+    color: #000000; /* text-black */
+    border-radius: 0 1rem 1rem 0; /* rounded-r-lg, round only the right side */
+    padding: 0.375rem 1.25rem; /* px-5 and py-1.5 */
+    border: 2px solid #8cc43c; /* border-2 border-Kgreen */
+    margin-left: 0.5rem; /* ml-2 */
+    height: 3rem; /* h-12 */
+    transition: background-color 0.3s ease; /* transition duration-300 */
+    flex-shrink: 0; /* Prevent the button from shrinking */
+  }
+  
+  .search-button-hero:hover {
+    background-color: #8cc43c; /* hover:bg-Kgreen */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 500px) {
+    .search-input-hero  {
+      padding: 0.375rem 1rem; /* Adjust padding */
+      height: 2rem; /* Slightly smaller height */
+      margin-left: 8px;
+    }
+  @media (max-width: 500px) {
+    .search-button-hero {
+      padding: 0.375rem 1rem; /* Adjust padding */
+      height: 2rem; /* Slightly smaller height */
+      margin-right: 8px;
+    }
+  
+    /* If you wish to adjust the width proportionally as well, you can add max-width */
+    .search-input-hero {
+      max-width: calc(100% - 4rem); /* Adjust max-width to leave space for button */
+    }
+  }
+}

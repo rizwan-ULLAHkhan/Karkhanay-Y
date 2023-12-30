@@ -7,6 +7,7 @@ import AuthProvider from '../components/Authprovider/Authprovider'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from '../app/redux/store'
+import { usePathname } from 'next/navigation';
 
 
 
@@ -18,10 +19,15 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
+
   children,
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
+  const isHomePage = pathname === '/';
+  
+
   return (
     <html lang="en">
 
@@ -30,7 +36,7 @@ export default function RootLayout({
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <AuthProvider>
-              <NavBar />
+              <NavBar showSearchBar={isHomePage}  />
               {children}
             </AuthProvider>
           </PersistGate>

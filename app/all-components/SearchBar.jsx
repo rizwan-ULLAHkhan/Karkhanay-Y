@@ -3,13 +3,21 @@
 import { useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { useRouter } from 'next/navigation'
+import "@/app/styles/searchbar.css"
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({ onSearch, location }) => {
+  console.log(location, "bhai check this location")
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
 
+  const searchBarClass = location === 'hero'
+    ? "search-input-hero"
+    : "flex-1 bg-white border-2 md:border-transparent rounded-l-lg md:hover:border-Kgreen outline-none text-black pl-2 py-1 transition duration-300 border-Kgreen";
+
+  const buttonClass = location === 'hero'
+    ?"search-button-hero"
+    : "bg-orange-400 text-white rounded-r-lg px-5 py-1.5 border-Kgreen border-2 md:border-none hover:bg-Kgreen transition duration-300 ml-2";
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
@@ -43,23 +51,22 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center bg-transparent sm:w-1/2 w-full mx-4 my-2 ">
+    <div className={`flex items-center sm:w-1/2 w-full mx-4 my-2 ${location === 'hero' ? 'hero-specific-styles' : 'navbar-specific-styles'}`}>
       <input
         type="text"
         placeholder="Search products..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="flex-1 bg-transparent border-2 md:border-transparent rounded-l-lg md:hover:border-Kgreen outline-none text-white pl-2 py-1 transition duration-300 border-Kgreen"
+        className={searchBarClass}
       />
       <button
         onClick={handleSearch}
-        className="bg-orange-400 text-white rounded-r-lg px-5 py-1.5 border-Kgreen border-2 md:border-none hover:bg-Kgreen transition duration-300 ml-2"
+        className={buttonClass}
       >
         {isLoading ? 'Searching...' : <FiSearch />}
       </button>
     </div>
   );
 };
-
 export default SearchBar;

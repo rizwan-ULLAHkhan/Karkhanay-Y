@@ -21,6 +21,7 @@ const ChatApp = () => {
   const [receiverName, setReceiverName] = useState<string>('');
   const [receiverImage, setReceiverImage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false); // New state to track chat visibility
   const { data: session } = useSession(); // Using NextAuth for session handling
   const userId = session?.user?.id;
 
@@ -46,18 +47,28 @@ const ChatApp = () => {
     fetchConversations();
   }, [userId]);
 
-  const handleConversationClick = (conversation:ConversationData) => {
+  const handleConversationClick = (conversation: ConversationData) => {
     console.log(conversation._id)
     setCurrentConversationId(conversation._id);
     setReceiverName(userId === conversation.participant1 ? conversation.participant2Name : conversation.participant1Name);
     setReceiverImage(userId === conversation.participant1 ? conversation.participant2Image : conversation.participant1Image);
 
+    if (window.innerWidth <= 800) {
+      setIsChatOpen(true);
+    }
+
     // Additional logic for handling WebSocket subscription
+  };
+
+
+  // Function to go back to the conversation list on small screens
+  const handleBackToConversations = () => {
+    setIsChatOpen(false);
   };
 
   return (
     <div className="chat-app">
-      <div className="sidebar">
+      <div className={`sidebar ${isChatOpen ? 'hidden' : ''}`}>
         <div className=' text-black font-bold pb-2 pl-1 border-b-4'>Conversations</div>
         {isLoading ? (
           <div className=" text-black">Loading conversations...</div>
@@ -81,14 +92,19 @@ const ChatApp = () => {
         )}
       </div>
 
-      <div className="chat-area">
-        {currentConversationId && userId && !isLoading? (
-          <ChatInterface
-            conversationId={currentConversationId}
-            receiverName={receiverName}
-            receiverImage={receiverImage}
-            userId={userId}
-          />
+      <div className={`chat-area ${isChatOpen ? 'active' : ''}`}>
+        {currentConversationId && userId && !isLoading ? (
+          <>
+            {window.innerWidth <= 800 && (
+              <button onClick={handleBackToConversations}>Back to Conversations</button>
+            )}
+            <ChatInterface
+              conversationId={currentConversationId}
+              receiverName={receiverName}
+              receiverImage={receiverImage}
+              userId={userId}
+            />
+          </>
         ) : (
           <div className="select-conversation">Please select a conversation</div>
         )}

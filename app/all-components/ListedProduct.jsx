@@ -9,7 +9,9 @@ const ListedProduct = () => {
     const [notification, setNotification] = useState({ visible: false, message: '' });
     const [products, setProducts] = useState([]);
     const { data: session } = useSession();
+    const [modal, setModal] = useState({ visible: false, message: '' });
     const userEmail = session?.user?.email;
+
 
 
     const handleStockChange = async (productToUpdate) => {
@@ -50,14 +52,13 @@ const ListedProduct = () => {
 
     const handleDelete = async (product) => {
         const confirmation = window.confirm('Are you sure you want to delete this product?', product._id);
-        console.log("ye wala", product._id)
         if (!confirmation) return;
 
+        // Mark the product as deleted (isDeleted: true)
         try {
-            // First, mark the product as deleted (isDeleted: true) with a PUT request
             const markAsDeletedResponse = await fetch(`/api/productdatachange/${product._id}`, {
                 method: 'PUT',
-                headers: {  
+                headers: {
                     'User-Email': userEmail,
                     'Content-Type': 'application/json',
                 },
@@ -65,50 +66,50 @@ const ListedProduct = () => {
             });
 
             if (!markAsDeletedResponse.ok) {
-                console.error("Failed to mark product as deleted.");
-                setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
-                return;
+                throw new Error("Failed to mark product as deleted.");
             }
 
-            // // Remove the product from the UI by filtering it out
+            // Attempt to delete the product from the database and Sanity
+            const deleteResponse = await fetch(`/api/productDelete/${product._id}`, {
+                method: 'PUT', // Note: Should ideally be 'DELETE' if it aligns with your server setup
+                headers: {
+                    'User-Email': userEmail,
+                },
+            });
+
+            if (!deleteResponse.ok) {
+                throw new Error("Failed to delete product.");
+            }
+
+            // Remove the product from the UI
             setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
-            console.log("chnage and return")
+            setModal({
+                visible: true,
+                message: 'deleted successfully!',
+                color: 'text-green-500'
+            });
+
+            setTimeout(() => {
+                setModal({ visible: false, message: '' });
+            }, 3000);
 
         } catch (error) {
             console.error("Error:", error);
             setNotification({ visible: true, message: 'Failed to delete product. Please try again.' });
-            return;
-        }
 
 
-
-
-
-        try {
-            const response = await fetch(`/api/productdatachange/${product._id}`, {
-                method: 'DELETE',
+            // Rollback: Mark the product as not deleted
+            await fetch(`/api/productdatachange/${product._id}`, {
+                method: 'PUT',
                 headers: {
                     'User-Email': userEmail,
+                    'Content-Type': 'application/json',
                 },
-
+                body: JSON.stringify({ isDeleted: false }), // Set isDeleted back to false
             });
-
-            if (response.ok) {
-                // Remove the product from the UI by fetching products again or filtering out the deleted one
-                // Option 1: refetch products
-                console.log("fetch product accessed")
-                setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
-
-                // Option 2: filter out the deleted product from state
-                // setProducts(prevProducts => prevProducts.filter(product => product._id !== id));
-            } else {
-                
-                console.error("Failed to delete productsss.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
         }
     };
+
 
     const fetchProducts = async () => {
         try {
@@ -138,8 +139,13 @@ const ListedProduct = () => {
     return (
         <div>
             <h2 className="text-xl mb-4">Your Products</h2>
+            {modal.visible && (
+                <div className={`modal-content ${modal.color} `}>
+                    <p>{modal.message}</p>
+                </div>
+            )}
             {products
-                .filter(product => !product.isDeleted)  // This is the filter
+                .filter(product => !product.isDeleted)
                 .map(product => (
                     <Products key={product._id} product={product} handleStockChange={handleStockChange} handleDelete={handleDelete} />
                 ))}

@@ -95,3 +95,12 @@ io.on('connection', (socket) => {
 socketIOServer.listen(socketIOPort, () => {
   console.log(`> Socket.io Ready on http://localhost:${socketIOPort}`);
 });
+
+
+
+// "scripts": {
+//   "dev": "next dev",
+//   "build": "next build",
+//   "start": "next start",
+//   "lint": "next lint"
+// },

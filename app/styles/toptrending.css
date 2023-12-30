@@ -1,0 +1,198 @@
+.featuredSection {
+  padding: 16px;
+  background-color: #f9f9f9;
+  /* Lighter shade for contrast */
+}
+
+.titleContainer {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  color: #000;
+  /* Black for titles */
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.error {
+  color: #ff0000;
+  /* Red for errors */
+  text-align: center;
+  margin: 8px 0;
+}
+
+.categoryContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.categoryButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #8cc43c;
+  /* Kgreen */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.categoryButton.active {
+  background-color: #6da32f;
+  /* Darker shade for the active state */
+}
+
+.productsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  /* Responsive grid */
+  gap: 16px;
+}
+
+
+
+.imageContainer {
+  width: 100%;
+  height: 250px;
+  /* Fixed height for images */
+  position: relative;
+  margin-bottom: 8px;
+}
+
+
+
+.productPrice {
+  font-size: 1rem;
+  color: #808080;
+  /* Kgray */
+  margin-top: 8px;
+}
+
+.featuredBadge {
+  display: inline-block;
+  background-color: #8cc43c;
+  /* Kgreen */
+  color: white;
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  margin-top: 16px;
+}
+
+.viewAllContainer {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.viewAllButton {
+  color: #8cc43c;
+  /* Kgreen */
+  border: 2px solid #8cc43c;
+  /* Kgreen */
+  background: none;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.viewAllButton:hover {
+  background-color: #8cc43c;
+  /* Kgreen */
+  color: white;
+}
+
+
+
+.featuredProductsContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* 3 items per row */
+  gap: 20px;
+  /* Adjust the gap as needed */
+  margin: 0 auto;
+  max-width: 1200px;
+  /* Adjust the max-width as needed */
+  padding: 0 20px;
+  /* Add some padding */
+}
+
+.productCard {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.productCard:hover {
+  transform: translateY(-5px);
+}
+
+/* For tablets */
+@media (max-width: 768px) {
+  .featuredProductsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 items per row */
+  }
+}
+
+/* For mobile */
+@media (max-width: 480px) {
+  .featuredProductsContainer {
+    grid-template-columns: 1fr;
+    /* 1 item per row */
+  }
+}
+
+.productImageContainer {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 56.25%;
+  /* 16:9 Aspect Ratio */
+}
+
+.productImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.productInfo {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  /* Semi-transparent overlay */
+  color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.productName {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.productPrice {
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.mySwiper .swiper-button-prev,
+.mySwiper .swiper-button-next {
+  color: #000;
+  /* or any color you prefer */
+  /* Additional styling as needed */
+}
