@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
+    "start": "NODE_ENV=production node server.js",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "next-start": "next start -p 3000"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.0",
@@ -62,5 +62,3 @@
     "@types/socket.io-client": "^3.0.0"
   }
 }
-
-

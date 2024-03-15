@@ -36,7 +36,7 @@ export default function RootLayout({
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <AuthProvider>
-              <NavBar showSearchBar={isHomePage}  />
+              <NavBar showSearchBar={!isHomePage}  />
               {children}
             </AuthProvider>
           </PersistGate>

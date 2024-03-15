@@ -12,7 +12,7 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation, Mousewheel } from 'swiper';
 
 
-const CombinedFeature = () => {
+const TopTrending = () => {
   const [categoriesWithTrending, setCategoriesWithTrending] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -125,4 +125,4 @@ const CombinedFeature = () => {
   );
 
 }
-export default CombinedFeature;
+export default TopTrending;

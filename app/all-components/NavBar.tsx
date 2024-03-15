@@ -55,7 +55,7 @@ const NavBar = ({ showSearchBar }: NavBarProps) => {
         <div className=" text-Kgray font-bold text-lg ">Karkhanay</div>
       </Link>
 
-      {!showSearchBar &&<SearchBar onSearch={executeSearch}  location='navbar'/>}
+      {showSearchBar &&<SearchBar onSearch={executeSearch}  location='navbar'/>}
 
       <div className="font-mono gap-2 flex items-center ml-4 lg:mb-0 mb-2">
         {session && (

@@ -1,42 +1,56 @@
-'use client'
-import { useState } from 'react';
-import React from 'react'
+import React, { useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Navigation, Thumbs } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
 import Image from 'next/image';
-const ImageSection = ({productData}) => {
-    
-    const [mainImageUrl, setMainImageUrl] = useState(productData?.urls?.[0]); // Initialize with the default main image URL
+import '@/app/styles/imagesection.css'
+
+const ImageSection = ({ productData }) => {
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
   return (
-    <div className=" md:w-2/5 md: h-fit md:mt-4 ">
+    <>
+      {/* Main Image Swiper */}
+      <Swiper
+        loop={true}
+        spaceBetween={10}
+        navigation={true}
+        thumbs={{ swiper: thumbsSwiper }}
+        modules={[FreeMode, Navigation, Thumbs]}
+        className="bg-black mainSwiper "
 
-                    {/* Main Image */}
-                    <div className=' flex md:h-2/5 w-fit h-fit items-center'>
-                        <Image
-                            src={mainImageUrl} // <- Main Image URL
-                            alt={productData.name}
-                            
-                            width={700} // Adjust width as needed
-                            height={700} // Adjust height as needed
-                            className="main-product-image"
-                        />
-                    </div>
+      >
+        {productData?.urls?.map((url, index) => (
+          <SwiperSlide key={index}>
+            <Image src={url} alt={`Image ${index}`} layout='fill' objectFit='contain' />
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
-                    {/* Thumbnail Images */}
-                    <div className="flex gap-6 ml-2 mt-6 w-fit">
-                        {productData?.urls?.filter(url => url !== mainImageUrl).map((thumb, index) => (
-                            <Image
-                                key={index}
-                                src={thumb}
-                                alt={`Thumbnail ${index}`}
-                                width={70}
-                                height={80}
-                                className="thumbnail "
-                                onClick={() => setMainImageUrl(thumb)} // Update main image URL on thumbnail click
-                            />
-                        ))}
-                    </div>
-                </div>
 
-  )
-}
 
-export default ImageSection
+      {/* Thumbnails Swiper */}
+      <Swiper
+        onSwiper={setThumbsSwiper}
+        loop={false}
+       
+        slidesPerView={window.innerWidth > 768 ? 5 : 2} // Adjust based on screen width
+        freeMode={true}
+        watchSlidesProgress={true}
+        modules={[FreeMode, Navigation, Thumbs]}
+        className="mt-1 thumbnailSwiper  "
+      >
+        {productData?.urls?.map((url, index) => (
+          <SwiperSlide key={index} className='hover:border-b-2' >
+            <Image className='hover:border-b-2' src={url} alt={`Thumbnail ${index}`}  layout='fill' objectFit='contain'  />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </>
+  );
+};
+
+export default ImageSection;

@@ -1,0 +1,38 @@
+.mainSwiper .swiper-slide {
+  /* Styles for main image slides */
+  width: 500px;
+  min-width: 200px;
+  height: 60vh;
+  position: relative;
+}
+
+.thumbnailSwiper .swiper-slide {
+  width: fit-content;
+  height: 50px; /* Adjust thumbnail height */
+}
+
+/* Image styles can remain the same if they apply universally */
+.swiper-slide img {
+  
+  object-fit:contain;
+  object-position: center;
+}
+
+/* Media queries can adjust sizes for the main image swiper slides specifically */
+@media (max-width: 1024px) {
+  .mainSwiper .swiper-slide {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainSwiper .swiper-slide {
+    height: 30vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainSwiper .swiper-slide {
+    height: 20vh;
+  }
+}

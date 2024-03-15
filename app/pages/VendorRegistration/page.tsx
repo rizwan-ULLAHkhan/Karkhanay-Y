@@ -4,10 +4,20 @@ import { useSession } from 'next-auth/react';
 import { FiUser, FiPhoneCall, FiMapPin, FiGlobe, FiBriefcase, FiHome, FiMail } from 'react-icons/fi';
 import '../VendorRegistration/vendorregister.css'
 
+
+type ModalState = {
+    visible: boolean;
+    message: string;
+    color?: string; // Make color optional if it's not always required
+};
+
+
 const VendorRegistration = () => {
     const { data: session } = useSession();
+    const [modal, setModal] = useState<ModalState>({ visible: false, message: '' });
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false); // New state for button disabled status
     const [formData, setFormData] = useState({
-        
+
         fullName: '',
         address: '',
         contactNumber: '',
@@ -15,14 +25,15 @@ const VendorRegistration = () => {
         city: '',
         companyName: '',
         email: '',
-        
+
         // Add more fields as necessary
     });
-
+    const industryTypes: string[] = ['Technology', 'Sports', 'Medical', 'Entertainment'];
     const handleFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setIsButtonDisabled(true); // Disable button as soon as form is submitted
         const vendorRegistrationData = {
-            gmail:session?.user?.email,
+            gmail: session?.user?.email,
             fullName: formData.fullName,
             companyName: formData.companyName,
             contactNumber: formData.contactNumber,
@@ -30,34 +41,62 @@ const VendorRegistration = () => {
             city: formData.city,
             address: formData.address,
             email: formData.email,
-          };
+        };
 
-          try {
+
+        try {
             const response = await fetch('/api/vendorRegistration', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(vendorRegistrationData),
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(vendorRegistrationData),
             });
 
             if (!response.ok) {
                 // MongoDB POST failed. Deleting images from Sanity:
-                
+
                 console.error(`Error : ${response.status} - ${response.statusText}`);
                 // handle the error, maybe set an error state or show a notification to the user
+                alert("bc")
                 return;
-              }
-            } catch (error) {
-              
-              alert('An error occurred while uploading registration data. Please try again.');
-              
             }
-          
-        
+
+            setModal({
+                visible: true,
+                message: 'vendor data uploaded successfully!',
+                color: 'text-green-500'
+            });
+
+            setTimeout(() => {
+                setModal({ visible: false, message: '' });
+                setIsButtonDisabled(false); // Consider re-enabling the button if there's an error
+            }, 3000);
+
+
+
+            // Reset form data here
+            setFormData({
+                fullName: '',
+                address: '',
+                contactNumber: '',
+                industryType: '',
+                city: '',
+                companyName: '',
+                email: '',
+                // Reset other fields as necessary
+            });
+
+        } catch (error) {
+            setIsButtonDisabled(false); // Consider re-enabling the button if there's an error
+            alert('An error occurred while uploading registration data. Please try again.');
+
+        }
+
+
     };
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
         setFormData({
             ...formData,
@@ -73,12 +112,18 @@ const VendorRegistration = () => {
     return (
         // Container for the form with added padding for smaller screens
         <div className="max-w-lg mx-auto my-10 p-4 sm:p-6 bg-white rounded-lg shadow-xl">
+            {modal.visible && (
+                <div className={`modal-content ${modal.color} `}>
+                    <p>{modal.message}</p>
+                </div>
+            )}
             <form onSubmit={handleFormSubmit}>
                 {/* Form Heading */}
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-semibold text-Kgray">Vendor Registration</h2>
                     <p className="text-Kgray">Join our community of professional sellers</p>
                 </div>
+
 
                 {/* Full Name Field */}
                 <div className="mb-6 flex items-center  border-Kblue py-2">
@@ -164,38 +209,43 @@ const VendorRegistration = () => {
                         onChange={handleInputChange}
                         className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                         required
-                        
+
                     // ... existing props
                     />
                 </div>
 
-                {/* Industry Type Field */}
-                <div className="mb-6 flex items-center  border-Kblue py-2">
-                    <FiGlobe className="text-Kblue" />
-                    <input
-                        type="text"
+                {/* Industry Type Dropdown */}
+                <div className="mb-6 flex items-center border-Kblue py-2">
+                    <FiGlobe className="text-Kblue mr-8 " />
+                    <select
                         id="industryType"
                         name="industryType"
-                        placeholder="Industry Type e.g., Sports, Medical, etc."
                         value={formData.industryType}
                         onChange={handleInputChange}
-                        className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                        className=" appearance-none bg-transparent border-none w-full text-gray-700  py-1 px-2 leading-tight focus:outline-none"
                         required
-                    // ... existing props
-                    />
+                    >
+                        <option value="" >Select Industry Type</option>
+                        {industryTypes.map((type, index: number) => (
+                            <option key={index} value={type} >
+                                {type}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* Submit Button */}
                 <div className="flex justify-center mt-8">
                     <button
                         type="submit"
-                        className="w-full bg-Kblue hover:bg-Kgreen text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"
-                        
+                        className={`w-full bg-Kblue hover:bg-Kgreen text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-colors duration-300 ${isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={isButtonDisabled} // Use isButtonDisabled state here
                     >
                         Register as a Seller
                     </button>
                 </div>
             </form>
+
         </div>
     );
 };

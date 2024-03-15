@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     
-
+    console.log("vendor ka data upload hogya")
     return NextResponse.json({ message: 'Vendor data created successfully!' });
 }
 

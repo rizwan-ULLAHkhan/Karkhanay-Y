@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import HeroSection from '@/app/all-components/HeroSection'
 import store from '../app/redux/store'
 import MBannerText from './all-components/MBannerText'
-import M2TopTrending from './all-components/TopTrending'
+import TopTrending from './all-components/TopTrending'
 import Link from 'next/link';
 
 
@@ -32,7 +32,7 @@ export default function Home() {
       <HeroSection/>
       
       
-      <M2TopTrending/>
+      <TopTrending/>
       
       
 
