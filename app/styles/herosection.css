@@ -2,26 +2,28 @@
 .karkhanay-title {
     display: inline-flex;
      /* Semi-transparent white background */
-    padding: 10px 30px; /* Adjust as necessary */
+    padding: px 20px; /* Adjust as necessary */
     font-size: 6rem; /* Larger font size */
     font-weight: bold;
-    margin-bottom: 30px;
+    margin-bottom: 0px;
     border-radius: 10px; /* Rounded corners */
     color: #8cc43c; /* Your brand color */
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    
 }
 
 .hero-container {
     position: relative;
-    background-image: url('');
-    background-size: cover;
+    background-image: url();
+    background-size: contain;
     background-position: center;
-    height: 600px;
+    background-repeat: no-repeat;
+    height:300px;
     display: flex;
     align-items: center;
     justify-content: center;
-    
-}
+  }
+  
+
 
 .overlay {
     position: absolute;
@@ -34,7 +36,7 @@
 }
 
 .hero-content {
-    position: relative;
+    position:relative;
     z-index: 2;
     text-align: center;
     max-width: 800px; /* adjust as necessary */

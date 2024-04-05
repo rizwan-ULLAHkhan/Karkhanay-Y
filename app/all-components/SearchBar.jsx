@@ -51,7 +51,7 @@ const SearchBar = ({ onSearch, location }) => {
   };
 
   return (
-    <div className={` shadow-xl rounded-xl  flex items-center sm:w-1/2 w-full mx-4 my-2 ${location === 'hero' ? 'hero-specific-styles' : 'navbar-specific-styles'}`}>
+    <div className={`rounded-xl  flex items-center sm:w-1/2 w-full mx-4 my-2 ${location === 'hero' ? 'hero-specific-styles' : 'navbar-specific-styles'}`}>
       <input
         type="text"
         placeholder="Search products..."

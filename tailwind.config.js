@@ -24,7 +24,7 @@ module.exports = {
         cyan: '#A1FFF7',
         heather: '#B8AEDA',
         Kgreen:'#8cc43c',        
-        Korange: '#D2691E',
+        Korange: '#f2a344', 
         Kgray:'#808080',
         Kblue: 'black'
       },

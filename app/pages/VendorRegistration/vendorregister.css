@@ -1,21 +1,100 @@
-input[type="text"],
-input[type="tel"],
-input[type="email"],
-input[type="url"] {
-    padding-left: 2.5rem; /* Make room for the icon */
+.vendor-registration-form {
+  background: #fff; /* Change to match your form's background */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  margin: 40px auto;
 }
 
-input::placeholder {
-    color: #cbd5e0; /* A lighter gray for placeholders */
+.vendor-registration-form h1 {
+  color: #333; /* Change to match your heading color */
+  margin-bottom: 5px;
+  font-size: 1.2rem; /* Adjusted for better hierarchy */
 }
 
-input:focus::placeholder {
-    color: transparent; /* Hide placeholder text on focus */
+.vendor-registration-form form {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
 }
 
-/* Icons */
-.react-icons {
-    position: absolute;
-    margin-left: 0.75rem;
-    margin-top: 0.375rem; /* Center vertically in the input */
+.vendor-registration-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vendor-registration-form input[type="text"],
+.vendor-registration-form input[type="email"],
+.vendor-registration-form input[type="tel"],
+.vendor-registration-form input[type="password"],
+.vendor-registration-form input[type="file"],
+.vendor-registration-form select,
+.vendor-registration-form button {
+  padding: 12px;
+  border: 1px solid #ccc; /* Change to match your input border color */
+  border-radius: 4px;
+  width: 100%; /* Makes input fields full width */
+}
+
+.vendor-registration-form input[type="submit"],
+.vendor-registration-form button.submit-btn {
+  background: #007bff; /* Change to match your button color */
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px; /* Add space above the submit button */
+}
+
+.vendor-registration-form input[type="submit"]:hover,
+.vendor-registration-form button.submit-btn:hover {
+  background: #0056b3; /* Darker shade for hover effect */
+}
+
+.vendor-registration-form input[type="file"] {
+  padding: 8px; /* Adjust for file input */
+}
+
+.vendor-registration-form input[type="text"]:focus,
+.vendor-registration-form input[type="email"]:focus,
+.vendor-registration-form input[type="tel"]:focus,
+.vendor-registration-form input[type="password"]:focus,
+.vendor-registration-form select:focus {
+  border-color: #007bff; /* Highlight color when focused */
+  outline: none; /* Removes default focus outline */
+}
+
+.error-message {
+  color: red; /* Example error color */
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .vendor-registration-form {
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .vendor-registration-form h1 {
+    font-size: 1 rem; /* Slightly smaller on mobile */
+  }
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 40%; /* Adjust width as per preference */
+  max-width: 400px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  z-index: 1000; /* Make sure it's on top */
+  text-align: center;
 }

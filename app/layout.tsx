@@ -8,6 +8,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from '../app/redux/store'
 import { usePathname } from 'next/navigation';
+import Navbar2 from './all-components/NavBar2/Navbar2'
 
 
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           <PersistGate loading={null} persistor={persistor}>
             <AuthProvider>
               <NavBar showSearchBar={!isHomePage}  />
+              <Navbar2/>
               {children}
             </AuthProvider>
           </PersistGate>

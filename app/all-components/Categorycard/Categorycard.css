@@ -1,0 +1,40 @@
+.category-container {
+    
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
+    
+  }
+  
+  .category-card {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .category-card img {
+    width: 100%;
+    transition: transform 0.3s ease;
+  }
+  
+  .category-card:hover img {
+    transform: scale(1.1); /* Zooms in the image */
+  }
+  
+  .category-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2em; /* Example font size, adjust as needed */
+    transition: background 0.3s ease;
+  }
+  
+  .category-card:hover .category-label {
+    background: rgba(0, 0, 0, 0.7); /* Darkens the overlay slightly on hover */
+  }
+  

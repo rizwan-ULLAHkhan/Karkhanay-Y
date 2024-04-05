@@ -1,0 +1,25 @@
+.navbar {
+    display: flex;
+  
+    justify-content: start;
+    align-items: center;
+    background-color: white; /* Your desired background */
+    color: #fff; /* Your desired text color */
+  }
+  
+  .nav-item {
+    margin: 0 10px; /* Adjust spacing as needed */
+  }
+  
+  .nav-item a {
+    color: black; /* Your desired link color */
+    text-decoration: none; /* Optional: removes underline from links */
+    padding: 10px 15px; /* Adjust padding as needed */
+  }
+  
+  .nav-item a:hover {
+    background-color: #f2a344; /* Optional: hover effect */
+  }
+  
+  /* Add additional styling for DropdownMenu if needed */
+  

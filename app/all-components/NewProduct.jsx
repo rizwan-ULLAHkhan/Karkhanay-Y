@@ -97,6 +97,7 @@ export default function NewProduct() {
         visible: true,
         message: 'User email not available. Please log in again.'
       });
+      
       setTimeout(() => {
         setNotification({ visible: false, message: '' });
       }, 3000);

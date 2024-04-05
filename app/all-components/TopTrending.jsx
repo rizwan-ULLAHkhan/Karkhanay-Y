@@ -10,6 +10,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation, Mousewheel } from 'swiper';
+import { SpokeSpinner } from '../../components/spinner/spinner'
 
 
 const TopTrending = () => {
@@ -47,8 +48,8 @@ const TopTrending = () => {
   return (
     <section className="featuredSection">
       <div className="titleContainer">
-        <h1 className="title">
-          {loading ? 'Loading...' : `Top Trending Products in ${selectedCategory}`}
+        <h1 className="title flex justify-center">
+          {loading ? <SpokeSpinner size="xl" color="blue" /> : "Top Trending Products"  }
         </h1>
       </div>
 

@@ -2,22 +2,48 @@ import clientPromise from '../../../lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 
 interface VendorRegistrationRequestBody {
-    gmail:string,
-    fullName: string;
-    companyName: string;
-    contactNumber: string;
-    industryType: string;
-    city: string;
-    address: string;
     email: string;
-    
-}
+    firstName: string;
+    lastName: string;
+    phone: string;
+    cnic: string;
+    cnicFrontImageUrl:string;
+    cnicBackImageUrl:string;
+    password:string,
+    confirmPassword:string,
+    companyName: string;
+    storeName: string;
+    streetAddress: string;
+    city: string;
+    province: string;
+    nationalTaxNumber: string;
+    secpNumber: string;
+  }
+  
 
 export async function POST(req: NextRequest, res: NextResponse) {
     console.log("POST function accessed for Vendor");
     const data = await req.json();
 
-    const { gmail, fullName, companyName, contactNumber, industryType, city, address, email } = data as VendorRegistrationRequestBody;
+    const { 
+        email, 
+        firstName, 
+        lastName, 
+        phone, 
+        cnic, 
+        cnicFrontImageUrl,
+        cnicBackImageUrl,
+        password,
+        confirmPassword,
+        companyName, 
+        storeName, 
+        streetAddress, 
+        city, 
+        province, 
+        nationalTaxNumber, 
+        secpNumber 
+      } = data as VendorRegistrationRequestBody;
+      
 
 
     const client = await clientPromise;
@@ -28,16 +54,25 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
     const newVendor = {
-        gmail,
-        fullName,
-        companyName,
-        contactNumber,
-        industryType,
-        city,
-        address,
-        email,
-        createdAt: new Date(), 
-    };
+        email: email, 
+        firstName: firstName, 
+        lastName: lastName, 
+        phone: phone, 
+        cnic: cnic, 
+        cnicFrontImageUrl:cnicFrontImageUrl,
+        cnicBackImageUrl:cnicBackImageUrl,
+        password:password,
+        confirmPassword:confirmPassword,
+        companyName: companyName, 
+        storeName: storeName, 
+        streetAddress: streetAddress, 
+        city: city, 
+        province: province, 
+        nationalTaxNumber: nationalTaxNumber, 
+        secpNumber: secpNumber,
+        createdAt: new Date(), // Timestamp for when this record is created
+      };
+      
 
 
     let insertedvendorDataId;
